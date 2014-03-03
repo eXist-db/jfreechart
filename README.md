@@ -7,7 +7,7 @@ The project generates a XAR file containing all required JAA files (can  be used
 
 build with the following command, Java7 is required.
 
-'''
+```
 ant setup
 ant
-'''
+```
