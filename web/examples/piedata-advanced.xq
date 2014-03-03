@@ -4,7 +4,7 @@
     
     $Id$ 
 :)
-declare namespace jfreechart = "http://exist-db.org/xquery/jfreechart";
+import module namespace  jfreechart = "http://exist-db.org/xquery/jfreechart";
 
 (: Example use of all advanced config parameters :)
 
@@ -20,4 +20,4 @@ let $config :=
     </configuration>
 
 return
-    jfreechart:stream-render( "PieChart", $config, doc( '/db/piedata-advanced.xml' ) )
+    jfreechart:stream-render( "PieChart", $config, doc( 'piedata-advanced.xml' ) )

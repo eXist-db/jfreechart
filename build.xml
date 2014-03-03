@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="xar" name="messaging-replication">
+
+    <description>Build descriptor for the messaging-replication extension of eXist-db</description>
+
+    <property file="local.build.properties"/>
+    <property file="build.properties"/>
+
+    <property name="build.dir" value="build"/>
+    <property name="build.libs" value="${build.dir}/lib"/>
+    <property name="dist.dir" value="dist"/>
+
+    <property name="java.src" value="java/src"/>
+    <property name="java.classes" value="${build.dir}/classes"/>
+    <property name="java.libs" value="java/lib"/>
+
+    <property name="web.dir" value="web"/>
+    <property name="config.dir" value="config"/>
+
+    <!-- Setup IVY download manager -->
+    <path id="ivy.lib.path">
+        <fileset dir="build/lib" includes="*.jar" erroronmissingdir="false"/>
+    </path>
+
+    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant"
+        classpathref="ivy.lib.path" onerror="report"/>
+
+    <!-- Seup build path -->
+    <path id="classpath">
+        <fileset dir="${exist.dir}">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${exist.dir}/lib/core">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${exist.dir}/lib/optional">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${exist.dir}/tools/jetty/lib">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${java.libs}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="setup" description="Download the Ivy dependency manager">
+        <mkdir dir="${build.libs}"/>
+        <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/2.3.0/ivy-2.3.0.jar"
+            dest="${build.libs}"/>
+    </target>
+
+    <target name="download" description="Download 3d party JAR files"
+        xmlns:ivy="antlib:org.apache.ivy.ant">
+        <ivy:retrieve sync="true" pattern="${java.libs}/[artifact]-[revision](-[classifier]).[ext]"/>
+		<!-- workaround ivy bug -->
+	    <delete>
+	       <fileset dir="${java.libs}" includes="xml-api*"/>
+		   <fileset dir="${java.libs}" includes="xalan*"/>
+	     </delete>
+    </target>
+	
+    <target name="process" description="Process template files">
+		<copy file="config/application/expath-pkg.xml.tmpl" tofile="config/application/expath-pkg.xml">
+			<filterset>
+			      <filter token="VERSION" value="${module.version}"/>
+				  <filter token="TITLE" value="${module.title}"/>
+			 </filterset>
+		</copy>
+		<copy file="config/application/repo.xml.tmpl" tofile="config/application/repo.xml">
+			<filterset>
+			      <filter token="VERSION" value="${module.version}"/>
+				  <filter token="TITLE" value="${module.title}"/>
+			 </filterset>
+		</copy>
+		<copy file="config/library/expath-pkg.xml.tmpl" tofile="config/library/expath-pkg.xml">
+			<filterset>
+			      <filter token="VERSION" value="${module.version}"/>
+				  <filter token="TITLE" value="${module.title}"/>
+			 </filterset>
+		</copy>
+		<copy file="config/library/exist.xml.tmpl" tofile="config/library/exist.xml">
+			<filterset>
+			      <filter token="VERSION" value="${module.version}"/>
+				  <filter token="TITLE" value="${module.title}"/>
+			 </filterset>
+		</copy>
+		<copy file="config/library/repo.xml.tmpl" tofile="config/library/repo.xml">
+			<filterset>
+			      <filter token="VERSION" value="${module.version}"/>
+				  <filter token="TITLE" value="${module.title}"/>
+			 </filterset>
+		</copy>
+    </target>
+
+    <target name="prepare" depends="process" description="Create empty directories">
+		<tstamp/>
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.libs}"/>
+        <mkdir dir="${java.classes}"/>
+        <mkdir dir="${java.libs}"/>
+    </target>
+
+    <target name="clean" description="Clean up all generated files">
+        <delete dir="${build.dir}" includes="*.jar"/>
+        <delete dir="${build.dir}/classes"/>
+        <delete dir="${dist.dir}"/>
+		<delete dir="config/application" includes="*.xml"/>
+		<delete dir="config/library" includes="*.xml"/>
+    </target>
+
+    <target name="clean-all" depends="clean" description="Reset to clean state">
+        <delete dir="${build.dir}"/>
+        <delete dir="${java.libs}"/>
+    </target>
+
+    <target name="compile" depends="prepare,download" description="Compile java sources">
+        <javac srcdir="${java.src}" destdir="${java.classes}" optimize="true" debug="true"
+            target="${javac.target}" source="${javac.source}" includeantruntime="false">
+            <classpath>
+                <path refid="classpath"/>
+            </classpath>
+			<!-- <compilerarg value="-Xlint"/> -->
+        </javac>
+    </target>
+
+    <target name="jar" depends="compile" description="Create JAR file">
+        <jar basedir="${java.classes}" jarfile="${build.dir}/exist-${module.name}-${module.version}.jar">
+            <manifest>
+                <attribute name="Project-Name" value="${module.name}"/>
+                <attribute name="Project-Version" value="${module.version}"/>
+                <attribute name="Project-Build" value="${DSTAMP}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="xar" depends="jar" description="Create XAR files">
+        
+        <!-- create web application -->
+        <zip destfile="${dist.dir}/${module.name}-showcase-${module.version}.xar">
+            <fileset dir="${web.dir}"/>
+            <zipfileset dir="${config.dir}/application" includes="*.xml"/>
+        </zip>
+        
+        <!-- create library -->
+        <zip destfile="${dist.dir}/${module.name}-${module.version}.xar">
+            <zipfileset dir="${build.dir}" includes="*.jar" prefix="jfreechart"/>
+            <zipfileset dir="${java.libs}" prefix="jfreechart">
+                <include name="*.jar"/>
+                <exclude name="*-javadoc.jar"/>
+                <exclude name="*-sources.jar"/>
+            </zipfileset>
+            <zipfileset dir="${config.dir}/library" includes="*.xml"/>
+        </zip>       
+    </target>
+    
+    <target name="install" description="Install jar files into ${exist.dir}/lib/extensions">
+        <copy file="${build.dir}/exist-${module.name}-${module.version}.jar" todir="${exist.dir}/lib/user"/>
+        
+        <copy todir="${exist.dir}/lib/user">
+            <fileset dir="${java.libs}" includes="*.jar" excludes="*sources*,*javadoc*"/>
+        </copy>
+    </target>
+
+</project>

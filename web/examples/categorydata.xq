@@ -4,7 +4,7 @@
     
     $Id$ 
 :)
-declare namespace jfreechart = "http://exist-db.org/xquery/jfreechart";
+import module namespace  jfreechart = "http://exist-db.org/xquery/jfreechart";
 
 jfreechart:stream-render("BarChart",
 
@@ -15,4 +15,4 @@ jfreechart:stream-render("BarChart",
     <title>Example 1</title>
 </configuration>, 
 
-doc('/db/categorydata.xml'))
+doc('categorydata.xml'))

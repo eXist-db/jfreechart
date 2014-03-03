@@ -4,7 +4,7 @@
     
     $Id$ 
 :)
-declare namespace jfreechart = "http://exist-db.org/xquery/jfreechart";
+import module namespace  jfreechart = "http://exist-db.org/xquery/jfreechart";
 
 (: Example use of all advanced config parameters :)
 
@@ -13,7 +13,7 @@ let $config :=
         <orientation>Horizontal</orientation>
         <height>500</height>
         <width>700</width>
-        <title>Example 1</title>
+        <title>Example 4</title>
         <titleColor>red</titleColor>
         <rangeLowerBound>0.0</rangeLowerBound>
         <rangeUpperBound>100.0</rangeUpperBound>
@@ -23,4 +23,4 @@ let $config :=
     </configuration>
 
 return
-    jfreechart:stream-render( "BarChart", $config, doc( '/db/categorydata-advanced.xml' ) )
+    jfreechart:stream-render( "BarChart", $config, doc( 'categorydata-advanced.xml' ) )

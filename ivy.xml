@@ -1,0 +1,23 @@
+<!--
+    Ivy module to retrieve the required jar files
+-->
+<ivy-module version="2.0">
+
+    <info organisation="org.exist" module="jfreechart"/>
+    <dependencies>
+
+       <dependency org="org.jfree" name="jfreechart" rev="1.0.17" />
+	   
+	   <dependency org="org.apache.xmlgraphics" name="batik-svggen" rev="1.7" />
+	   
+	   <dependency org="org.apache.xmlgraphics" name="batik-svg-dom" rev="1.7" />
+	   
+	   <exclude module="servlet-api"/>
+	   
+	   <exclude module="xml-apis"/>
+	   <exclude module="xml-apis-ext"/>
+	   <exclude module="xalan"/>
+        
+    </dependencies>
+    
+</ivy-module>
