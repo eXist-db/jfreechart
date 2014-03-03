@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project default="xar" name="messaging-replication">
+<project default="xar" name="jfreechart">
 
-    <description>Build descriptor for the messaging-replication extension of eXist-db</description>
+    <description>Build descriptor for the JFreeChart extension of eXist-db</description>
 
     <property file="local.build.properties"/>
     <property file="build.properties"/>
