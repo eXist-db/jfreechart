@@ -1,11 +1,19 @@
 JFreeChart extension
 ==========
 
-This is the eXist-db JFreeChart extension which has been part of the standard distribution for a long time, but due to the size of the thirdparty jar files it hadn't been enabled.
+The eXist-db [JFreeChart](http://www.jfree.org/jfreechart/) extension has been part of the eXist-db distribution for a long time, but due to the size of the third party libraries it hasn't been enabled by default. 
 
-The project generates a XAR file containing all required JAR files (can  be used standalone) and a small Showcase XAR.
+This project two XAR files:
+- a XAR file containing all required JAR files (can  be used standalone) 
+- and a small Showcase web application XAR.
 
-build with the following command, Java7 is required.
+The XAR file is shipped with [JFreeChart](http://www.jfree.org/jfreechart/) *1.0.17* and  [Apache™ Batik SVG Toolkit](https://xmlgraphics.apache.org/batik/) version *1.8*.
+
+
+Installable XAR files are available on the [releases](releases) page. 
+
+
+The extention can be build with the following command (Java7 is required):
 
 ```shell
 ant setup
