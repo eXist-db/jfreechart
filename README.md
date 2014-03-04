@@ -12,7 +12,8 @@ ant setup
 ant
 ```
 
-Using the extion is as easy as in the followinh example:
+
+The extension can be used as shown in the following example:
 
 ```xquery
 import module namespace jfreechart = "http://exist-db.org/xquery/jfreechart";
