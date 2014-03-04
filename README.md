@@ -12,11 +12,10 @@ ant setup
 ant
 ```
 
-Using the extion is as easy as in the followinf example:
+Using the extion is as easy as in the followinh example:
 
 ```xquery
 import module namespace jfreechart = "http://exist-db.org/xquery/jfreechart";
-
 
 let $config :=
     <configuration>
