@@ -10,7 +10,9 @@ This project two XAR files:
 The XAR file is shipped with [JFreeChart](http://www.jfree.org/jfreechart/) *1.0.17* and  [Apache™ Batik SVG Toolkit](https://xmlgraphics.apache.org/batik/) version *1.8*.
 
 
-Installable XAR files are available on the [releases](releases) page. 
+Installable XAR files are available on the [releases](../../releases) page. Contributions are welcome via [Pull requests](../../pulls); bugreports, ideas and suggestions can be files using the [Issues](../../issues) page.
+
+==========
 
 
 The extention can be build with the following command (Java7 is required):
@@ -21,7 +23,7 @@ ant
 ```
 
 
-The extension can be used as shown in the following example:
+Example code:
 
 ```xquery
 import module namespace jfreechart = "http://exist-db.org/xquery/jfreechart";
