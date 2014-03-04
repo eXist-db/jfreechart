@@ -7,3 +7,4 @@ config/library/expath-pkg.xml
 config/library/repo.xml
 config/application/expath-pkg.xml
 config/application/repo.xml
+local.build.properties
