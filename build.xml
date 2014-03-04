@@ -17,6 +17,11 @@
     <property name="web.dir" value="web"/>
     <property name="config.dir" value="config"/>
 
+    <setproxy nonproxyhosts="${proxy.nonproxyhosts}" proxyhost="${proxy.host}"
+        proxyport="${proxy.port}" proxypassword="${proxy.password}" proxyuser="${proxy.user}"
+        socksproxyhost="${proxy.socks.host}" socksproxyport="${proxy.socks.port}"/>
+
+
     <!-- Setup IVY download manager -->
     <path id="ivy.lib.path">
         <fileset dir="build/lib" includes="*.jar" erroronmissingdir="false"/>
@@ -53,48 +58,49 @@
     <target name="download" description="Download 3d party JAR files"
         xmlns:ivy="antlib:org.apache.ivy.ant">
         <ivy:retrieve sync="true" pattern="${java.libs}/[artifact]-[revision](-[classifier]).[ext]"/>
-		<!-- workaround ivy bug -->
-	    <delete>
-	       <fileset dir="${java.libs}" includes="xml-api*"/>
-		   <fileset dir="${java.libs}" includes="xalan*"/>
-	     </delete>
+        <!-- workaround ivy bug -->
+        <delete>
+            <fileset dir="${java.libs}" includes="xml-api*"/>
+            <fileset dir="${java.libs}" includes="xalan*"/>
+        </delete>
     </target>
-	
+
     <target name="process" description="Process template files">
-		<copy file="config/application/expath-pkg.xml.tmpl" tofile="config/application/expath-pkg.xml">
-			<filterset>
-			      <filter token="VERSION" value="${module.version}"/>
-				  <filter token="TITLE" value="${module.title}"/>
-			 </filterset>
-		</copy>
-		<copy file="config/application/repo.xml.tmpl" tofile="config/application/repo.xml">
-			<filterset>
-			      <filter token="VERSION" value="${module.version}"/>
-				  <filter token="TITLE" value="${module.title}"/>
-			 </filterset>
-		</copy>
-		<copy file="config/library/expath-pkg.xml.tmpl" tofile="config/library/expath-pkg.xml">
-			<filterset>
-			      <filter token="VERSION" value="${module.version}"/>
-				  <filter token="TITLE" value="${module.title}"/>
-			 </filterset>
-		</copy>
-		<copy file="config/library/exist.xml.tmpl" tofile="config/library/exist.xml">
-			<filterset>
-			      <filter token="VERSION" value="${module.version}"/>
-				  <filter token="TITLE" value="${module.title}"/>
-			 </filterset>
-		</copy>
-		<copy file="config/library/repo.xml.tmpl" tofile="config/library/repo.xml">
-			<filterset>
-			      <filter token="VERSION" value="${module.version}"/>
-				  <filter token="TITLE" value="${module.title}"/>
-			 </filterset>
-		</copy>
+        <copy file="config/application/expath-pkg.xml.tmpl"
+            tofile="config/application/expath-pkg.xml">
+            <filterset>
+                <filter token="VERSION" value="${module.version}"/>
+                <filter token="TITLE" value="${module.title}"/>
+            </filterset>
+        </copy>
+        <copy file="config/application/repo.xml.tmpl" tofile="config/application/repo.xml">
+            <filterset>
+                <filter token="VERSION" value="${module.version}"/>
+                <filter token="TITLE" value="${module.title}"/>
+            </filterset>
+        </copy>
+        <copy file="config/library/expath-pkg.xml.tmpl" tofile="config/library/expath-pkg.xml">
+            <filterset>
+                <filter token="VERSION" value="${module.version}"/>
+                <filter token="TITLE" value="${module.title}"/>
+            </filterset>
+        </copy>
+        <copy file="config/library/exist.xml.tmpl" tofile="config/library/exist.xml">
+            <filterset>
+                <filter token="VERSION" value="${module.version}"/>
+                <filter token="TITLE" value="${module.title}"/>
+            </filterset>
+        </copy>
+        <copy file="config/library/repo.xml.tmpl" tofile="config/library/repo.xml">
+            <filterset>
+                <filter token="VERSION" value="${module.version}"/>
+                <filter token="TITLE" value="${module.title}"/>
+            </filterset>
+        </copy>
     </target>
 
     <target name="prepare" depends="process" description="Create empty directories">
-		<tstamp/>
+        <tstamp/>
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${build.libs}"/>
         <mkdir dir="${java.classes}"/>
@@ -105,8 +111,8 @@
         <delete dir="${build.dir}" includes="*.jar"/>
         <delete dir="${build.dir}/classes"/>
         <delete dir="${dist.dir}"/>
-		<delete dir="config/application" includes="*.xml"/>
-		<delete dir="config/library" includes="*.xml"/>
+        <delete dir="config/application" includes="*.xml"/>
+        <delete dir="config/library" includes="*.xml"/>
     </target>
 
     <target name="clean-all" depends="clean" description="Reset to clean state">
@@ -120,12 +126,13 @@
             <classpath>
                 <path refid="classpath"/>
             </classpath>
-			<!-- <compilerarg value="-Xlint"/> -->
+            <!-- <compilerarg value="-Xlint"/> -->
         </javac>
     </target>
 
     <target name="jar" depends="compile" description="Create JAR file">
-        <jar basedir="${java.classes}" jarfile="${build.dir}/exist-${module.name}-${module.version}.jar">
+        <jar basedir="${java.classes}"
+            jarfile="${build.dir}/exist-${module.name}-${module.version}.jar">
             <manifest>
                 <attribute name="Project-Name" value="${module.name}"/>
                 <attribute name="Project-Version" value="${module.version}"/>
@@ -135,13 +142,13 @@
     </target>
 
     <target name="xar" depends="jar" description="Create XAR files">
-        
+
         <!-- create web application -->
         <zip destfile="${dist.dir}/${module.name}-showcase-${module.version}.xar">
             <fileset dir="${web.dir}"/>
             <zipfileset dir="${config.dir}/application" includes="*.xml"/>
         </zip>
-        
+
         <!-- create library -->
         <zip destfile="${dist.dir}/${module.name}-${module.version}.xar">
             <zipfileset dir="${build.dir}" includes="*.jar" prefix="jfreechart"/>
@@ -151,12 +158,13 @@
                 <exclude name="*-sources.jar"/>
             </zipfileset>
             <zipfileset dir="${config.dir}/library" includes="*.xml"/>
-        </zip>       
+        </zip>
     </target>
-    
+
     <target name="install" description="Install jar files into ${exist.dir}/lib/extensions">
-        <copy file="${build.dir}/exist-${module.name}-${module.version}.jar" todir="${exist.dir}/lib/user"/>
-        
+        <copy file="${build.dir}/exist-${module.name}-${module.version}.jar"
+            todir="${exist.dir}/lib/user"/>
+
         <copy todir="${exist.dir}/lib/user">
             <fileset dir="${java.libs}" includes="*.jar" excludes="*sources*,*javadoc*"/>
         </copy>
