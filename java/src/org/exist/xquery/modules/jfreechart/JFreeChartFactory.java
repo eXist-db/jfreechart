@@ -26,9 +26,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.text.DecimalFormat;
+import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.StringTokenizer;
-
 import org.apache.log4j.Logger;
 import org.exist.xquery.XPathException;
 import org.jfree.chart.ChartFactory;
@@ -38,8 +38,8 @@ import org.jfree.chart.labels.CategoryItemLabelGenerator;
 import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.MultiplePiePlot;
+import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.SpiderWebPlot;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.title.LegendTitle;
@@ -67,7 +67,7 @@ public class JFreeChartFactory {
      * @param conf      Chart configuration
      * @param is        Inputstream containing chart data
      * @return          Initialized chart or NULL in case of issues.
-     * @throws IOException Thrown when a problem is reported while parsing XML data.
+     * @throws org.exist.xquery.XPathException Thrown when something unexpected happens
      */
     public static JFreeChart createJFreeChart(String chartType, Configuration conf, InputStream is)
             throws XPathException {
@@ -78,10 +78,8 @@ public class JFreeChartFactory {
         CategoryDataset categoryDataset = null;
         PieDataset pieDataset = null;
 
-        try{
-            if ("PieChart".equals(chartType)
-                    || "PieChart3D".equals(chartType)
-                    || "RingChart".equals(chartType)) {
+        try {
+            if ("PieChart".equals(chartType) || "PieChart3D".equals(chartType) || "RingChart".equals(chartType)) {
                 logger.debug("Reading XML PieDataset");
                 pieDataset = DatasetReader.readPieDatasetFromXML(is);
 
@@ -89,8 +87,8 @@ public class JFreeChartFactory {
                 logger.debug("Reading XML CategoryDataset");
                 categoryDataset = DatasetReader.readCategoryDatasetFromXML(is);
             }
-            
-        } catch(IOException ex){
+
+        } catch (IOException ex) {
             throw new XPathException(ex.getMessage());
 
         } finally {
@@ -104,196 +102,210 @@ public class JFreeChartFactory {
         // Return chart
         JFreeChart chart = null;
 
-        // Big chart type switch
-        if ("AreaChart".equalsIgnoreCase(chartType)) {
-            chart = ChartFactory.createAreaChart(
-                    conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
-                    conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
-                    
-                    setCategoryChartParameters( chart, conf );
+        // Big chart type switch, case sensitive now
+        switch (chartType) {
 
-        } else if ("BarChart".equalsIgnoreCase(chartType)) {
-            chart = ChartFactory.createBarChart(
-                    conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
-                    conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
-                    
-                    setCategoryChartParameters( chart, conf );
+            case "AreaChart":
+                chart = ChartFactory.createAreaChart(
+                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
+                        conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
+                setCategoryChartParameters(chart, conf);
+                break;
 
-        } else if ("BarChart3D".equalsIgnoreCase(chartType)) {
-            chart = ChartFactory.createBarChart3D(
-                    conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
-                    conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
-                    
-                    setCategoryChartParameters( chart, conf );
+            case "BarChart":
+                chart = ChartFactory.createBarChart(
+                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
+                        conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
 
-        } else if ("LineChart".equalsIgnoreCase(chartType)) {
-            chart = ChartFactory.createLineChart(
-                    conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
-                    conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
-                    
-                    setCategoryChartParameters( chart, conf );
+                setCategoryChartParameters(chart, conf);
+                break;
 
-        } else if ("LineChart3D".equalsIgnoreCase(chartType)) {
-            chart = ChartFactory.createLineChart3D(
-                    conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
-                    conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
-                    
-                    setCategoryChartParameters( chart, conf );
+            case "BarChart3D":
+                chart = ChartFactory.createBarChart3D(
+                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
+                        conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
 
-        } else if ("MultiplePieChart".equalsIgnoreCase(chartType)) {
-            chart = ChartFactory.createMultiplePieChart(
-                    conf.getTitle(), categoryDataset, conf.getOrder(),
-                    conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
-                    
-                    setPieChartParameters( chart, conf );
+                setCategoryChartParameters(chart, conf);
+                break;
 
-        } else if ("MultiplePieChart3D".equalsIgnoreCase(chartType)) {
-            chart = ChartFactory.createMultiplePieChart3D(
-                    conf.getTitle(), categoryDataset, conf.getOrder(),
-                    conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
-                    
-                    setPieChartParameters( chart, conf );
+            case "LineChart":
+                chart = ChartFactory.createLineChart(
+                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
+                        conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
 
-        } else if ("PieChart".equalsIgnoreCase(chartType)) {
-            chart = ChartFactory.createPieChart(
-                    conf.getTitle(), pieDataset,
-                    conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
-                    
-                    setPieChartParameters( chart, conf );
+                setCategoryChartParameters(chart, conf);
+                break;
 
-        } else if ("PieChart3D".equalsIgnoreCase(chartType)) {
-            chart = ChartFactory.createPieChart3D(
-                    conf.getTitle(), pieDataset,
-                    conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
-                    
-                    setPieChartParameters( chart, conf );
+            case "LineChart3D":
+                chart = ChartFactory.createLineChart3D(
+                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
+                        conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
 
-        } else if ("RingChart".equalsIgnoreCase(chartType)) {
-            chart = ChartFactory.createRingChart(
-                    conf.getTitle(), pieDataset,
-                    conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
-                    
-                     setPieChartParameters( chart, conf );
-        } else if ("SpiderWebChart".equalsIgnoreCase(chartType)) {
-            SpiderWebPlot plot = new SpiderWebPlot(categoryDataset);
-            if (conf.isGenerateTooltips()) {
-                plot.setToolTipGenerator(new StandardCategoryToolTipGenerator());
-            }
-            chart = new JFreeChart(conf.getTitle(), JFreeChart.DEFAULT_TITLE_FONT, plot, false);
+                setCategoryChartParameters(chart, conf);
+                break;
 
-            if (conf.isGenerateLegend()) {
-                LegendTitle legend = new LegendTitle(plot);
-                legend.setPosition(RectangleEdge.BOTTOM);
-                chart.addSubtitle(legend);
-            } else {
-                TextTitle subTitle = new TextTitle(" ");
-                subTitle.setPosition(RectangleEdge.BOTTOM);
-                chart.addSubtitle(subTitle);
-            }
+            case "MultiplePieChart":
+                chart = ChartFactory.createMultiplePieChart(
+                        conf.getTitle(), categoryDataset, conf.getOrder(),
+                        conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
 
+                setPieChartParameters(chart, conf);
+                break;
 
-            setCategoryChartParameters(chart, conf);
+            case "MultiplePieChart3D":
+                chart = ChartFactory.createMultiplePieChart3D(
+                        conf.getTitle(), categoryDataset, conf.getOrder(),
+                        conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
 
-        } else if ("StackedAreaChart".equalsIgnoreCase(chartType)) {
-            chart = ChartFactory.createStackedAreaChart(
-                    conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
-                    conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
-                    
-                    setCategoryChartParameters( chart, conf );
+                setPieChartParameters(chart, conf);
+                break;
 
-        } else if ("StackedBarChart".equalsIgnoreCase(chartType)) {
-            chart = ChartFactory.createStackedBarChart(
-                    conf.getTitle(), conf.getDomainAxisLabel(), conf.getRangeAxisLabel(), categoryDataset,
-                    conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
-                    
-                    setCategoryChartParameters( chart, conf );
+            case "PieChart":
+                chart = ChartFactory.createPieChart(
+                        conf.getTitle(), pieDataset,
+                        conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
 
-        } else if ("StackedBarChart3D".equalsIgnoreCase(chartType)) {
-            chart = ChartFactory.createStackedBarChart3D(
-                    conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
-                    conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
-                    
-                    setCategoryChartParameters( chart, conf );
+                setPieChartParameters(chart, conf);
+                break;
 
-        } else if ("WaterfallChart".equalsIgnoreCase(chartType)) {
-            chart = ChartFactory.createWaterfallChart(
-                    conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
-                    conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
-                    
-                    setCategoryChartParameters( chart, conf );
-        } else {
-            logger.error("Illegal chartype. Choose one of " +
-                    "AreaChart BarChart BarChart3D LineChart LineChart3D " +
-                    "MultiplePieChart MultiplePieChart3D PieChart PieChart3D " +
-                    "RingChart SpiderWebChart StackedAreaChart StackedBarChart " +
-                    "StackedBarChart3D WaterfallChart");
+            case "PieChart3D":
+                chart = ChartFactory.createPieChart3D(
+                        conf.getTitle(), pieDataset,
+                        conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
+
+                setPieChartParameters(chart, conf);
+                break;
+
+            case "RingChart":
+                chart = ChartFactory.createRingChart(
+                        conf.getTitle(), pieDataset,
+                        conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
+
+                setPieChartParameters(chart, conf);
+                break;
+
+            case "SpiderWebChart":
+                SpiderWebPlot plot = new SpiderWebPlot(categoryDataset);
+                if (conf.isGenerateTooltips()) {
+                    plot.setToolTipGenerator(new StandardCategoryToolTipGenerator());
+                }
+                chart = new JFreeChart(conf.getTitle(), JFreeChart.DEFAULT_TITLE_FONT, plot, false);
+
+                if (conf.isGenerateLegend()) {
+                    LegendTitle legend = new LegendTitle(plot);
+                    legend.setPosition(RectangleEdge.BOTTOM);
+                    chart.addSubtitle(legend);
+                } else {
+                    TextTitle subTitle = new TextTitle(" ");
+                    subTitle.setPosition(RectangleEdge.BOTTOM);
+                    chart.addSubtitle(subTitle);
+                }
+
+                setCategoryChartParameters(chart, conf);
+                break;
+
+            case "StackedAreaChart":
+                chart = ChartFactory.createStackedAreaChart(
+                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
+                        conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
+
+                setCategoryChartParameters(chart, conf);
+                break;
+
+            case "StackedBarChart":
+                chart = ChartFactory.createStackedBarChart(
+                        conf.getTitle(), conf.getDomainAxisLabel(), conf.getRangeAxisLabel(), categoryDataset,
+                        conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
+
+                setCategoryChartParameters(chart, conf);
+                break;
+
+            case "StackedBarChart3D":
+                chart = ChartFactory.createStackedBarChart3D(
+                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
+                        conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
+
+                setCategoryChartParameters(chart, conf);
+                break;
+
+            case "WaterfallChart":
+                chart = ChartFactory.createWaterfallChart(
+                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
+                        conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
+
+                setCategoryChartParameters(chart, conf);
+                break;
+
+            default:
+                logger.error("Illegal chart type. Choose one of "
+                        + "AreaChart BarChart BarChart3D LineChart LineChart3D "
+                        + "MultiplePieChart MultiplePieChart3D PieChart PieChart3D "
+                        + "RingChart SpiderWebChart StackedAreaChart StackedBarChart "
+                        + "StackedBarChart3D WaterfallChart");
+
         }
-        
+
         setCommonParameters( chart, conf );
 
         return chart;
     }
     
     
-    private static void setCategoryChartParameters( JFreeChart chart, Configuration config ) throws XPathException
-    {
-        setCategoryRange( chart, config );
-        setCategoryItemLabelGenerator( chart, config );
-	setCategoryLabelPositions( chart, config );
-        setSeriesColors( chart, config );
-	setAxisColors( chart, config );
+    private static void setCategoryChartParameters(JFreeChart chart, Configuration config) throws XPathException {
+        setCategoryRange(chart, config);
+        setCategoryItemLabelGenerator(chart, config);
+        setCategoryLabelPositions(chart, config);
+        setSeriesColors(chart, config);
+        setAxisColors(chart, config);
     }
     
     
-    private static void setCategoryRange( JFreeChart chart, Configuration config )
-    {
-        Double rangeLowerBound          = config.getRangeLowerBound();
-        Double rangeUpperBound          = config.getRangeUpperBound();
+    private static void setCategoryRange(JFreeChart chart, Configuration config) {
+        Double rangeLowerBound = config.getRangeLowerBound();
+        Double rangeUpperBound = config.getRangeUpperBound();
 
-        if( rangeUpperBound != null ) {
+        if (rangeUpperBound != null) {
             if (chart.getPlot() instanceof SpiderWebPlot) {
                 ((SpiderWebPlot) chart.getPlot()).setMaxValue(rangeUpperBound.doubleValue());
                 return;
             } else {
-                ((CategoryPlot)chart.getPlot()).getRangeAxis().setUpperBound( rangeUpperBound.doubleValue() );
+                ((CategoryPlot) chart.getPlot()).getRangeAxis().setUpperBound(rangeUpperBound.doubleValue());
             }
-        } 
-        
-        if( rangeLowerBound != null ) {
-            ((CategoryPlot)chart.getPlot()).getRangeAxis().setLowerBound( rangeLowerBound.doubleValue() );
+        }
+
+        if (rangeLowerBound != null) {
+            ((CategoryPlot) chart.getPlot()).getRangeAxis().setLowerBound(rangeLowerBound.doubleValue());
         }
     }
     
-    private static void setCategoryItemLabelGenerator( JFreeChart chart, Configuration config ) throws XPathException
-    {
-        String                      className  = config.getCategoryItemLabelGeneratorClass();
-        CategoryItemLabelGenerator  generator  = null;
-        
-        if( className != null ) {
+    private static void setCategoryItemLabelGenerator(JFreeChart chart, Configuration config) throws XPathException {
+        String className = config.getCategoryItemLabelGeneratorClass();
+        CategoryItemLabelGenerator generator = null;
+
+        if (className != null) {
             try {
-                Class generatorClass = Class.forName( className );
-                
-                 Class[] argsClass  = new Class[] { String.class, NumberFormat.class };
-                 String param       = config.getCategoryItemLabelGeneratorParameter();
-                 NumberFormat fmt   = new DecimalFormat( config.getCategoryItemLabelGeneratorNumberFormat() );
-                 Object[] args      = new Object[] { param, fmt };
-                 
-                 Constructor argsConstructor = generatorClass.getConstructor( argsClass );
-                
-                 generator = (CategoryItemLabelGenerator)argsConstructor.newInstance( args );
-            }
-            catch( Exception e ) {
-                throw( new XPathException( "Cannot instantiate CategoryItemLabelGeneratorClass: " + className + ", exception: " + e ) );
+                Class generatorClass = Class.forName(className);
+
+                Class[] argsClass = new Class[]{String.class, NumberFormat.class};
+                String param = config.getCategoryItemLabelGeneratorParameter();
+                NumberFormat fmt = new DecimalFormat(config.getCategoryItemLabelGeneratorNumberFormat());
+                Object[] args = new Object[]{param, fmt};
+
+                Constructor argsConstructor = generatorClass.getConstructor(argsClass);
+
+                generator = (CategoryItemLabelGenerator) argsConstructor.newInstance(args);
+            } catch (Exception e) {
+                throw (new XPathException("Cannot instantiate CategoryItemLabelGeneratorClass: " + className + ", exception: " + e));
             }
 
             if (chart.getPlot() instanceof SpiderWebPlot) {
                 ((SpiderWebPlot) chart.getPlot()).setLabelGenerator(generator);
             } else {
-                CategoryItemRenderer renderer = ((CategoryPlot)chart.getPlot()).getRenderer();
-                
-                renderer.setBaseItemLabelGenerator( generator );
-                
-                renderer.setItemLabelsVisible( true );
+                CategoryItemRenderer renderer = ((CategoryPlot) chart.getPlot()).getRenderer();
+
+                renderer.setBaseItemLabelGenerator(generator);
+
+                renderer.setItemLabelsVisible(true);
             }
         }
     }
@@ -382,12 +394,12 @@ public class JFreeChartFactory {
         String pieSectionNumberFormat   = config.getPieSectionNumberFormat();
         String pieSectionPercentFormat  = config.getPieSectionPercentFormat();
         
-        if( pieSectionLabel != null ) {
-	    if (chart.getPlot() instanceof MultiplePiePlot) {
-		((PiePlot) ((MultiplePiePlot)chart.getPlot()).getPieChart().getPlot()).setLabelGenerator( new StandardPieSectionLabelGenerator( pieSectionLabel, new DecimalFormat( pieSectionNumberFormat ), new DecimalFormat( pieSectionPercentFormat ) ) );
-	    } else {
-            ((PiePlot)chart.getPlot()).setLabelGenerator( new StandardPieSectionLabelGenerator( pieSectionLabel, new DecimalFormat( pieSectionNumberFormat ), new DecimalFormat( pieSectionPercentFormat ) ) );
-	    }
+        if (pieSectionLabel != null) {
+            if (chart.getPlot() instanceof MultiplePiePlot) {
+                ((PiePlot) ((MultiplePiePlot) chart.getPlot()).getPieChart().getPlot()).setLabelGenerator(new StandardPieSectionLabelGenerator(pieSectionLabel, new DecimalFormat(pieSectionNumberFormat), new DecimalFormat(pieSectionPercentFormat)));
+            } else {
+                ((PiePlot) chart.getPlot()).setLabelGenerator(new StandardPieSectionLabelGenerator(pieSectionLabel, new DecimalFormat(pieSectionNumberFormat), new DecimalFormat(pieSectionPercentFormat)));
+            }
         }
     }
     
@@ -419,9 +431,12 @@ public class JFreeChartFactory {
                 }
                    
                 if( color != null ) {
-                    plot.setSectionPaint( sectionName, color );
+                    plot.setSectionPaint(sectionName, color);
+
                 } else {
-                    logger.warn( "Invalid colour name or hex value specified for SectionColors: " + colorName + ", default colour will be used instead. Section Name: " + sectionName );
+                    logger.warn(MessageFormat.format("Invalid colour name or hex value specified for "
+                            + "SectionColors: {0}, default colour will be used instead. "
+                            + "Section Name: {1}", colorName, sectionName));
                 }
             }
         }
