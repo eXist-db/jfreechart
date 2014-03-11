@@ -22,7 +22,6 @@
 package org.exist.xquery.modules.jfreechart;
 
 import java.awt.Color;
-
 import org.exist.xquery.XPathException;
 
 /**
@@ -176,13 +175,20 @@ public class Colour
         { "YellowGreen", "9ACD32" }
     };
 
+    /**
+     * Convert color text into color object
+     *
+     * @param value Name of color
+     * @return COlor object representing the color name
+     *
+     * @throws XPathException Thrown when color can be converted.
+     */
     public static Color getColor( String value ) throws XPathException
     {
-        Color   color   = null;
-        
-        for( int i = 0; i < colours.length; i++ ) {
-            if( value.equalsIgnoreCase( colours[ i ][ 0 ] ) ) {
-                color = new Color( Integer.parseInt( colours[ i ][ 1 ], 16 ) );
+        Color color = null;
+        for (String[] colour : colours) {
+            if (value.equalsIgnoreCase(colour[0])) {
+                color = new Color(Integer.parseInt(colour[1], 16));
             }
         }
         
