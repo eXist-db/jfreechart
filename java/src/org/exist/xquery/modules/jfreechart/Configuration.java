@@ -246,7 +246,7 @@ public class Configuration {
 
                     // Verify that value is found
                     if (value == null) {
-                        throw new XPathException(MessageFormat.format("Value for '{0}' cannot be parsed", localName));
+                        throw new XPathException(MessageFormat.format("Value for \"{0}\" cannot be parsed", localName));
                     }
 
                     switch (localName) {
@@ -294,7 +294,7 @@ public class Configuration {
                                 orientation = PlotOrientation.VERTICAL;
 
                             } else {
-                                throw new XPathException(MessageFormat.format("Wrong value for '{0}'", localName));
+                                throw new XPathException(MessageFormat.format("Wrong value for \"{0}\"", localName));
                             }
                             verifyValue(localName, orientation);
                             break;
@@ -306,7 +306,7 @@ public class Configuration {
                                 order = TableOrder.BY_ROW;
 
                             } else {
-                                throw new XPathException(MessageFormat.format("Wrong value for '{0}'", localName));
+                                throw new XPathException(MessageFormat.format("Wrong value for \"{0}\"", localName));
                             }
                             verifyValue(localName, order);
                             break;
@@ -367,7 +367,7 @@ public class Configuration {
 
                         case "rangeUpperBound":
                             rangeUpperBound = parseDouble(value);
-                            verifyValue(localName, rangeAxisLabel);
+                            verifyValue(localName, rangeUpperBound);
                             break;
 
                         case "categoryItemLabelGeneratorClass":
@@ -393,7 +393,7 @@ public class Configuration {
                                 categoryLabelPositions = CategoryLabelPositions.DOWN_90;
 
                             } else {
-                                throw new XPathException(MessageFormat.format("Wrong value for '{0}'", localName));
+                                throw new XPathException(MessageFormat.format("Wrong value for \"{0}\"", localName));
                             }
                             verifyValue(localName, categoryLabelPositions);
                             break;
@@ -472,7 +472,7 @@ public class Configuration {
      */
     private void verifyValue(String localName, Object convertedValue) throws XPathException {
         if (convertedValue == null) {
-            throw new XPathException(MessageFormat.format("Unable to convert value of '{0}'", localName));
+	    throw new XPathException(MessageFormat.format("Unable to convert value of \"{0}\"", localName));
         }
     }
 }
