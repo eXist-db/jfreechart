@@ -130,6 +130,8 @@
         </javac>
     </target>
 
+    <target name="rebuild" depends="clean,xar"/>
+
     <target name="jar" depends="compile" description="Create JAR file">
         <jar basedir="${java.classes}"
             jarfile="${build.dir}/exist-${module.name}-${module.version}.jar">
@@ -151,8 +153,8 @@
 
         <!-- create library -->
         <zip destfile="${dist.dir}/${module.name}-${module.version}.xar">
-            <zipfileset dir="${build.dir}" includes="*.jar" prefix="jfreechart"/>
-            <zipfileset dir="${java.libs}" prefix="jfreechart">
+            <zipfileset dir="${build.dir}" includes="*.jar" prefix="content"/>
+            <zipfileset dir="${java.libs}" prefix="content">
                 <include name="*.jar"/>
                 <exclude name="*-javadoc.jar"/>
                 <exclude name="*-sources.jar"/>

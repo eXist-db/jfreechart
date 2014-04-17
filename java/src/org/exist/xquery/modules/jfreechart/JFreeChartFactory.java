@@ -42,6 +42,7 @@ import org.jfree.chart.plot.MultiplePiePlot;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.SpiderWebPlot;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
+import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.category.CategoryDataset;
@@ -252,6 +253,7 @@ public class JFreeChartFactory {
     
     
     private static void setCategoryChartParameters(JFreeChart chart, Configuration config) throws XPathException {
+	setRenderer(chart, config);
         setCategoryRange(chart, config);
         setCategoryItemLabelGenerator(chart, config);
         setCategoryLabelPositions(chart, config);
@@ -259,7 +261,12 @@ public class JFreeChartFactory {
         setAxisColors(chart, config);
     }
     
-    
+    private static void setRenderer(JFreeChart chart, Configuration config) {
+	if (chart.getPlot() instanceof CategoryPlot && config.isOnlyShape()) {
+	    CategoryItemRenderer renderer = new LineAndShapeRenderer(false, true);
+	    ((CategoryPlot) chart.getPlot()).setRenderer(renderer);
+	}
+    }
     private static void setCategoryRange(JFreeChart chart, Configuration config) {
         Double rangeLowerBound = config.getRangeLowerBound();
         Double rangeUpperBound = config.getRangeUpperBound();
