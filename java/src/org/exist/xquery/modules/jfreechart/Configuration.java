@@ -94,6 +94,8 @@ public class Configuration {
     private boolean generateTooltips = false;
     private boolean generateUrls = false;
 
+    private boolean onlyShape = false;
+
     // =========================
     // Getters
     public String getImageType() {
@@ -126,6 +128,10 @@ public class Configuration {
 
     public boolean isGenerateUrls() {
         return generateUrls;
+    }
+
+    public boolean isOnlyShape() {
+        return onlyShape;
     }
 
     public PlotOrientation getOrientation() {
@@ -324,6 +330,11 @@ public class Configuration {
                         case "urls":
                             generateUrls = parseBoolean(value);
                             verifyValue(localName, generateUrls);
+                            break;
+
+                        case "onlyShape":
+                            onlyShape = parseBoolean(value);
+                            verifyValue(localName, onlyShape);
                             break;
 
                         case "width":
