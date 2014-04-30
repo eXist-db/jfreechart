@@ -27,14 +27,14 @@
  * ---------------------------
  * XYZDatasetHandler.java
  * ---------------------------
- * (C) Copyright 2014, 
+ * (C) Copyright 2014 
  *
  * Original Author:  David Gilbert (for Object Refinery Limited);
- * Contributor(s):   -;
+ * Contributor(s):   Leif-Jöran Olsson;
  *
  * Changes
  * -------
- * 23-Jan-2003 : Version 1 (DG);
+ * 27-Apr-2014 : Version 1 (ljo);
  *
  */
 

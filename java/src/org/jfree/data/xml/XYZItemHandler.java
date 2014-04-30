@@ -27,14 +27,14 @@
  * ----------------
  * XYZItemHandler.java
  * ----------------
- * (C) Copyright 2014, 
+ * (C) Copyright 2014
  *
  * Original Author:  David Gilbert (for Object Refinery Limited);
- * Contributor(s):   -;
+ * Contributor(s):   Leif-Jöran Olsson;
  *
  * Changes
  * -------
- * 23-Jan-2003 : Version 1 (DG);
+ * 27-Apr-2014 : Version 1 (ljo);
  *
  */
 
@@ -111,9 +111,11 @@ public class XYZItemHandler extends DefaultHandler implements XYZDatasetTags {
 	if (this.parent instanceof XYSeriesHandler) {
             XYSeriesHandler handler = (XYSeriesHandler) this.parent;
             handler.addItem((double) this.valueX, (double) this.valueY);
+	    System.out.println("addSeriesItem: X: " + this.valueX + " Y: " + this.valueY);
 	} else if (this.parent instanceof XYZSeriesHandler) {
 	    XYZSeriesHandler handler = (XYZSeriesHandler) this.parent;
 	    handler.addItem((double) this.valueX, (double) this.valueY, (double) this.valueZ);
+	    System.out.println("addSeriesItem: X: " + this.valueX + " Y: " + this.valueY + " Z: " + this.valueZ);
 	}
     }
 

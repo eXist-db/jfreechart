@@ -2,7 +2,7 @@
  * JFreeChart : a free chart library for the Java(tm) platform
  * ===========================================================
  *
- * (C) Copyright 2013,
+ * (C) Copyright 2000-2013, by Object Refinery Limited and Contributors.
  *
  * Project Info:  http://www.jfree.org/jfreechart/index.html
  *
@@ -27,14 +27,14 @@
  * ------------------
  * XYDatasetReader.java
  * ------------------
- * (C) Copyright 2014,
+ * (C) Copyright 2014
  *
  * Original Author:  David Gilbert (for Object Refinery Limited);
- * Contributor(s):   -;
+ * Contributor(s):   Leif-Jöran Olsson;
  *
  * Changes
  * -------
- * 20-Nov-2002 : Version 1 (DG);
+ * 27-Apr-2014 : Version 1 (ljo);
  *
  */
 

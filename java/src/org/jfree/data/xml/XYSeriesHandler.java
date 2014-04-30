@@ -30,11 +30,11 @@
  * (C) Copyright 2014
  *
  * Original Author:  David Gilbert (for Object Refinery Limited);
- * Contributor(s):   -;
+ * Contributor(s):   Leif-Jöran Olsson;
  *
  * Changes
  * -------
- * 23-Jan-2003 : Version 1 (DG);
+ * 27-Apr-2014 : Version 1 (ljo);
  *
  */
 
@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import org.jfree.data.xy.DefaultXYDataset;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -63,7 +64,7 @@ public class XYSeriesHandler extends DefaultHandler
     private Comparable seriesKey;
 
     /** The values. */
-    private XYSeries values;
+    private XYSeriesCollection values;
 
     /**
      * Creates a new item handler.
@@ -72,7 +73,7 @@ public class XYSeriesHandler extends DefaultHandler
      */
     public XYSeriesHandler(RootHandler root) {
         this.root = root;
-        this.values = new XYSeries(this.seriesKey);
+        this.values = new XYSeriesCollection();
     }
 
     /**
@@ -82,6 +83,11 @@ public class XYSeriesHandler extends DefaultHandler
      */
     public void setSeriesKey(Comparable key) {
         this.seriesKey = key;
+	this.values.addSeries(new XYSeries(this.seriesKey));
+    }
+
+    public int getSeriesCount() {
+	return this.values.getSeriesCount(); 
     }
 
     /**
@@ -91,7 +97,8 @@ public class XYSeriesHandler extends DefaultHandler
      * @param valueY  the Y value.
      */
     public void addItem(double valueX, double valueY) {
-        this.values.add(valueX, valueY);
+	int series = getSeriesCount() - 1;
+        this.values.getSeries(series).add(valueX, valueY);
     }
 
     /**
@@ -109,7 +116,6 @@ public class XYSeriesHandler extends DefaultHandler
                              String localName,
                              String qName,
                              Attributes atts) throws SAXException {
-
         if (qName.equals(SERIES_TAG)) {
             setSeriesKey(atts.getValue("name"));
             XYZItemHandler subhandler = new XYZItemHandler(this.root, this);
@@ -139,10 +145,9 @@ public class XYSeriesHandler extends DefaultHandler
     public void endElement(String namespaceURI,
                            String localName,
                            String qName) {
-
         if (this.root instanceof XYDatasetHandler) {
             XYDatasetHandler handler = (XYDatasetHandler) this.root;
-	    handler.addSeries(this.seriesKey, values.toArray()[0], values.toArray()[1]);
+	    handler.setDataset(values);
             this.root.popSubHandler();
         }
 

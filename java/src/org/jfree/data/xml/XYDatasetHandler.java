@@ -25,23 +25,23 @@
  * Other names may be trademarks of their respective owners.]
  *
  * ---------------------------
- * CategoryDatasetHandler.java
+ * XYDatasetHandler.java
  * ---------------------------
- * (C) Copyright 2003-2008, by Object Refinery Limited and Contributors.
+ * (C) Copyright 2014
  *
  * Original Author:  David Gilbert (for Object Refinery Limited);
- * Contributor(s):   -;
+ * Contributor(s):   Leif-Jöran Olsson;
  *
  * Changes
  * -------
- * 23-Jan-2003 : Version 1 (DG);
+ * 27-Apr-2014 : Version 1 (ljo);
  *
  */
 
 package org.jfree.data.xml;
 
 import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.DefaultXYDataset;
+import org.jfree.data.xy.XYSeriesCollection;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -52,7 +52,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class XYDatasetHandler extends RootHandler implements XYZDatasetTags {
 
     /** The dataset under construction. */
-    private DefaultXYDataset dataset;
+    private XYSeriesCollection dataset;
 
     /**
      * Creates a new handler.
@@ -71,15 +71,12 @@ public class XYDatasetHandler extends RootHandler implements XYZDatasetTags {
     }
 
     /**
-     * Adds an item to the dataset.
+     * Sets a dataset.
      *
-     * @param rowKey  the row key.
-     * @param columnKey  the column key.
-     * @param value  the value.
+     * @param series the dataset.
      */
-    public void addSeries(Comparable seriesKey, double[] valuesX, double[] valuesY) {
-	double[][] values = new double[][] {valuesX, valuesY};
-        this.dataset.addSeries(seriesKey, values);
+    public void setDataset(XYSeriesCollection series) {
+        this.dataset = series;
     }
 
     /**
@@ -97,13 +94,12 @@ public class XYDatasetHandler extends RootHandler implements XYZDatasetTags {
                              String localName,
                              String qName,
                              Attributes atts) throws SAXException {
-
         DefaultHandler current = getCurrentHandler();
         if (current != this) {
             current.startElement(namespaceURI, localName, qName, atts);
         }
         else if (qName.equals(XYDATASET_TAG)) {
-            this.dataset = new DefaultXYDataset();
+            this.dataset = new XYSeriesCollection();
         }
         else if (qName.equals(XYZDatasetTags.SERIES_TAG)) {
             XYSeriesHandler subhandler = new XYSeriesHandler(this);
@@ -129,7 +125,6 @@ public class XYDatasetHandler extends RootHandler implements XYZDatasetTags {
     public void endElement(String namespaceURI,
                            String localName,
                            String qName) throws SAXException {
-
         DefaultHandler current = getCurrentHandler();
         if (current != this) {
             current.endElement(namespaceURI, localName, qName);

@@ -30,11 +30,11 @@
  * (C) Copyright 2014
  *
  * Original Author:  David Gilbert (for Object Refinery Limited);
- * Contributor(s):   -;
+ * Contributor(s):   Leif-Jöran Olsson;
  *
  * Changes
  * -------
- * 23-Jan-2003 : Version 1 (DG);
+ * 27-Apr-2014 : Version 1 (ljo);
  *
  */
 
@@ -109,7 +109,9 @@ public class XYZSeriesHandler extends DefaultHandler
      * Adds an item to the temporary storage for the series.
      *
      * @param key  the key.
-     * @param value  the value.
+     * @param valueX  the X value.
+     * @param valueY  the Y value.
+     * @param valueZ  the Z value.
      */
     public void addItem(final double valueX, final double valueY, final double valueZ) {
 	int series = getSeriesCount() - 1;
