@@ -269,6 +269,12 @@ public class JFreeChartFactory {
                         conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
 		XYPlot XYPlot = (XYPlot) chart.getPlot();
 		XYPlot.setForegroundAlpha(0.65f);
+		NumberAxis domainAxis = (NumberAxis) XYPlot.getDomainAxis();
+		domainAxis.setLowerMargin(0.15);
+		domainAxis.setUpperMargin(0.15);
+		NumberAxis rangeAxis = (NumberAxis) XYPlot.getRangeAxis();
+		rangeAxis.setLowerMargin(0.15);
+		rangeAxis.setUpperMargin(0.15);
                 //setCategoryChartParameters(chart, conf);
                 break;
 
@@ -301,6 +307,13 @@ public class JFreeChartFactory {
 	if (chart.getPlot() instanceof CategoryPlot && config.isOnlyShape()) {
 	    CategoryItemRenderer renderer = new LineAndShapeRenderer(false, true);
 	    CategoryPlot plot = (CategoryPlot) chart.getPlot();
+
+	    plot.setDomainGridlinesVisible(true);
+	    plot.setRangeGridlinesVisible(true);
+	    plot.setRangeZeroBaselineVisible(false);
+	    NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+	    rangeAxis.setAutoRangeIncludesZero(false);
+	    
 	    plot.setRenderer(renderer);
 	}
     }
