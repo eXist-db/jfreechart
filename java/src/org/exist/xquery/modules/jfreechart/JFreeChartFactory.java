@@ -34,6 +34,7 @@ import org.exist.xquery.XPathException;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryLabelPositions;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.labels.CategoryItemLabelGenerator;
 import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
@@ -41,6 +42,7 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.MultiplePiePlot;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.SpiderWebPlot;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.title.LegendTitle;
@@ -48,6 +50,9 @@ import org.jfree.chart.title.TextTitle;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.general.PieDataset;
 import org.jfree.data.xml.DatasetReader;
+import org.jfree.data.xml.XYDatasetReader;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYZDataset;
 import org.jfree.ui.RectangleEdge;
 
 /**
@@ -75,15 +80,23 @@ public class JFreeChartFactory {
 
         logger.debug("Generating "+chartType);
 
-        // Currently two dataset types supported
+        // Currently four dataset types supported
         CategoryDataset categoryDataset = null;
         PieDataset pieDataset = null;
+        XYDataset XYDataset = null;
+        XYZDataset XYZDataset = null;
 
         try {
             if ("PieChart".equals(chartType) || "PieChart3D".equals(chartType) || "RingChart".equals(chartType)) {
                 logger.debug("Reading XML PieDataset");
                 pieDataset = DatasetReader.readPieDatasetFromXML(is);
 
+            } else if ("ScatterPlot".equals(chartType) || "XYLineChart".equals(chartType)) {
+                logger.debug("Reading XML XYDataset");
+                XYDataset = XYDatasetReader.readXYDatasetFromXML(is);
+            } else if ("BubbleChart".equals(chartType)) {
+                logger.debug("Reading XML XYZDataset");
+                XYZDataset = XYDatasetReader.readXYZDatasetFromXML(is);
             } else {
                 logger.debug("Reading XML CategoryDataset");
                 categoryDataset = DatasetReader.readCategoryDatasetFromXML(is);
@@ -236,13 +249,36 @@ public class JFreeChartFactory {
 
                 setCategoryChartParameters(chart, conf);
                 break;
+            case "ScatterPlot":
+                chart = ChartFactory.createScatterPlot(
+                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), XYDataset,
+                        conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
+
+                //setCategoryChartParameters(chart, conf);
+                break;
+            case "XYLineChart":
+                chart = ChartFactory.createXYLineChart(
+                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), XYDataset,
+                        conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
+
+                //setCategoryChartParameters(chart, conf);
+                break;
+            case "BubbleChart":
+                chart = ChartFactory.createBubbleChart(
+                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), XYZDataset,
+                        conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
+		XYPlot XYPlot = (XYPlot) chart.getPlot();
+		XYPlot.setForegroundAlpha(0.65f);
+                //setCategoryChartParameters(chart, conf);
+                break;
+
 
             default:
                 logger.error("Illegal chart type. Choose one of "
                         + "AreaChart BarChart BarChart3D LineChart LineChart3D "
                         + "MultiplePieChart MultiplePieChart3D PieChart PieChart3D "
                         + "RingChart SpiderWebChart StackedAreaChart StackedBarChart "
-                        + "StackedBarChart3D WaterfallChart");
+                        + "StackedBarChart3D WaterfallChart, ScatterPlot, XYLineChart, BubbleChart");
 
         }
 
@@ -264,7 +300,8 @@ public class JFreeChartFactory {
     private static void setRenderer(JFreeChart chart, Configuration config) {
 	if (chart.getPlot() instanceof CategoryPlot && config.isOnlyShape()) {
 	    CategoryItemRenderer renderer = new LineAndShapeRenderer(false, true);
-	    ((CategoryPlot) chart.getPlot()).setRenderer(renderer);
+	    CategoryPlot plot = (CategoryPlot) chart.getPlot();
+	    plot.setRenderer(renderer);
 	}
     }
     private static void setCategoryRange(JFreeChart chart, Configuration config) {
