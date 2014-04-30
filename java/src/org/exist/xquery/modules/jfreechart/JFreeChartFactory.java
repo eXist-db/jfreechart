@@ -51,6 +51,7 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.general.PieDataset;
 import org.jfree.data.xml.DatasetReader;
 import org.jfree.data.xml.XYDatasetReader;
+import org.jfree.data.xy.IntervalXYDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYZDataset;
 import org.jfree.ui.RectangleEdge;
@@ -91,7 +92,7 @@ public class JFreeChartFactory {
                 logger.debug("Reading XML PieDataset");
                 pieDataset = DatasetReader.readPieDatasetFromXML(is);
 
-            } else if ("ScatterPlot".equals(chartType) || "XYLineChart".equals(chartType)) {
+            } else if ("ScatterPlot".equals(chartType) || "XYAreaChart".equals(chartType) || "XYBarChart".equals(chartType) || "XYLineChart".equals(chartType)) {
                 logger.debug("Reading XML XYDataset");
                 XYDataset = XYDatasetReader.readXYDatasetFromXML(is);
             } else if ("BubbleChart".equals(chartType)) {
@@ -256,6 +257,21 @@ public class JFreeChartFactory {
 
                 //setCategoryChartParameters(chart, conf);
                 break;
+            case "XYAreaChart":
+                chart = ChartFactory.createXYAreaChart(
+                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), XYDataset,
+                        conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
+
+                //setCategoryChartParameters(chart, conf);
+                break;
+            case "XYBarChart":
+                chart = ChartFactory.createXYBarChart(
+			conf.getTitle(), conf.getCategoryAxisLabel(), true,
+			conf.getValueAxisLabel(), (IntervalXYDataset) XYDataset,
+                        conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
+
+                //setCategoryChartParameters(chart, conf);
+                break;
             case "XYLineChart":
                 chart = ChartFactory.createXYLineChart(
                         conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), XYDataset,
@@ -281,10 +297,13 @@ public class JFreeChartFactory {
 
             default:
                 logger.error("Illegal chart type. Choose one of "
-                        + "AreaChart BarChart BarChart3D LineChart LineChart3D "
+                        + "CategoryDataset/PieDataset: AreaChart BarChart BarChart3D "
+			+ "LineChart LineChart3D "
                         + "MultiplePieChart MultiplePieChart3D PieChart PieChart3D "
                         + "RingChart SpiderWebChart StackedAreaChart StackedBarChart "
-                        + "StackedBarChart3D WaterfallChart, ScatterPlot, XYLineChart, BubbleChart");
+                        + "StackedBarChart3D WaterfallChart. "
+			+ "XYDataset: ScatterPlot XYAreaChart XYBarChart XYLineChart. "
+			+ "XYZDataset: BubbleChart.");
 
         }
 
