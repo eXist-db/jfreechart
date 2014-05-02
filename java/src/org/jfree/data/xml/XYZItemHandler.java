@@ -111,11 +111,11 @@ public class XYZItemHandler extends DefaultHandler implements XYZDatasetTags {
 	if (this.parent instanceof XYSeriesHandler) {
             XYSeriesHandler handler = (XYSeriesHandler) this.parent;
             handler.addItem((double) this.valueX, (double) this.valueY);
-	    System.out.println("addSeriesItem: X: " + this.valueX + " Y: " + this.valueY);
+	    //System.out.println("addSeriesItem: X: " + this.valueX + " Y: " + this.valueY);
 	} else if (this.parent instanceof XYZSeriesHandler) {
 	    XYZSeriesHandler handler = (XYZSeriesHandler) this.parent;
 	    handler.addItem((double) this.valueX, (double) this.valueY, (double) this.valueZ);
-	    System.out.println("addSeriesItem: X: " + this.valueX + " Y: " + this.valueY + " Z: " + this.valueZ);
+	    //System.out.println("addSeriesItem: X: " + this.valueX + " Y: " + this.valueY + " Z: " + this.valueZ);
 	}
     }
 
