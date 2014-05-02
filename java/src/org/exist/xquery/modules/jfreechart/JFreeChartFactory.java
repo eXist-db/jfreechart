@@ -1,6 +1,6 @@
 /*
  *  eXist Open Source Native XML Database
- *  Copyright (C) 2009-2013 The eXist-db Project
+ *  Copyright (C) 2009-2014 The eXist-db Project
  *  http://exist-db.org
  *
  *  This program is free software; you can redistribute it and/or
@@ -35,6 +35,7 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.SymbolAxis;
 import org.jfree.chart.labels.CategoryItemLabelGenerator;
 import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
@@ -45,6 +46,7 @@ import org.jfree.chart.plot.SpiderWebPlot;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
+import org.jfree.chart.renderer.xy.XYDotRenderer;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.category.CategoryDataset;
@@ -252,46 +254,38 @@ public class JFreeChartFactory {
                 break;
             case "ScatterPlot":
                 chart = ChartFactory.createScatterPlot(
-                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), XYDataset,
+                        conf.getTitle(), conf.getDomainAxisLabel(), conf.getRangeAxisLabel(), XYDataset,
                         conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
 
-                //setCategoryChartParameters(chart, conf);
+                setPlotAndNumberAxisParameters(chart, conf);
                 break;
             case "XYAreaChart":
                 chart = ChartFactory.createXYAreaChart(
-                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), XYDataset,
+                        conf.getTitle(), conf.getDomainAxisLabel(), conf.getRangeAxisLabel(), XYDataset,
                         conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
 
-                //setCategoryChartParameters(chart, conf);
+                setPlotAndNumberAxisParameters(chart, conf);
                 break;
             case "XYBarChart":
                 chart = ChartFactory.createXYBarChart(
-			conf.getTitle(), conf.getCategoryAxisLabel(), true,
-			conf.getValueAxisLabel(), (IntervalXYDataset) XYDataset,
+			conf.getTitle(), conf.getDomainAxisLabel(), true,
+			conf.getRangeAxisLabel(), (IntervalXYDataset) XYDataset,
                         conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
 
-                //setCategoryChartParameters(chart, conf);
+                setPlotAndNumberAxisParameters(chart, conf);
                 break;
             case "XYLineChart":
                 chart = ChartFactory.createXYLineChart(
-                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), XYDataset,
+                        conf.getTitle(), conf.getDomainAxisLabel(), conf.getRangeAxisLabel(), XYDataset,
                         conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
 
-                //setCategoryChartParameters(chart, conf);
+                setPlotAndNumberAxisParameters(chart, conf);
                 break;
             case "BubbleChart":
                 chart = ChartFactory.createBubbleChart(
-                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), XYZDataset,
+                        conf.getTitle(), conf.getDomainAxisLabel(), conf.getRangeAxisLabel(), XYZDataset,
                         conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
-		XYPlot XYPlot = (XYPlot) chart.getPlot();
-		XYPlot.setForegroundAlpha(0.65f);
-		NumberAxis domainAxis = (NumberAxis) XYPlot.getDomainAxis();
-		domainAxis.setLowerMargin(0.15);
-		domainAxis.setUpperMargin(0.15);
-		NumberAxis rangeAxis = (NumberAxis) XYPlot.getRangeAxis();
-		rangeAxis.setLowerMargin(0.15);
-		rangeAxis.setUpperMargin(0.15);
-                //setCategoryChartParameters(chart, conf);
+                setPlotAndNumberAxisParameters(chart, conf);
                 break;
 
 
@@ -314,7 +308,7 @@ public class JFreeChartFactory {
     
     
     private static void setCategoryChartParameters(JFreeChart chart, Configuration config) throws XPathException {
-	setRenderer(chart, config);
+	setPlotAndNumberAxisParameters(chart, config);
         setCategoryRange(chart, config);
         setCategoryItemLabelGenerator(chart, config);
         setCategoryLabelPositions(chart, config);
@@ -322,20 +316,105 @@ public class JFreeChartFactory {
         setAxisColors(chart, config);
     }
     
+    private static void setPlotAndNumberAxisParameters(JFreeChart chart, Configuration config) {
+	setRenderer(chart, config);
+	if (chart.getPlot() instanceof CategoryPlot) {
+	    CategoryPlot plot = (CategoryPlot) chart.getPlot();
+	    if (config.getForegroundAlpha() != null) {
+		plot.setForegroundAlpha(config.getForegroundAlpha());
+	    }
+	    plot.setDomainGridlinesVisible(config.isDomainGridlinesVisible());
+	    plot.setRangeGridlinesVisible(config.isRangeGridlinesVisible());
+	    plot.setRangeZeroBaselineVisible(config.isRangeZeroBaselineVisible());
+
+	    NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+	    rangeAxis.setAutoRangeIncludesZero(config.isRangeAutoRangeIncludesZero());
+	    if (config.isRangeIntegerTickUnits()) {
+		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+	    }
+	} else if (chart.getPlot() instanceof XYPlot) {
+	    XYPlot XYPlot = (XYPlot) chart.getPlot();
+	    if (config.getForegroundAlpha() != null) {
+		XYPlot.setForegroundAlpha(config.getForegroundAlpha());
+	    }
+
+	    XYPlot.setDomainGridlinesVisible(config.isDomainGridlinesVisible());
+	    XYPlot.setRangeGridlinesVisible(config.isRangeGridlinesVisible());
+	    XYPlot.setDomainZeroBaselineVisible(config.isDomainZeroBaselineVisible());
+	    XYPlot.setRangeZeroBaselineVisible(config.isRangeZeroBaselineVisible());
+
+	    NumberAxis domainAxis = (NumberAxis) XYPlot.getDomainAxis();
+	    Double domainLowerBound = config.getDomainLowerBound();
+	    Double domainUpperBound = config.getDomainUpperBound();
+	    Double domainLowerMargin = config.getDomainLowerMargin();
+	    Double domainUpperMargin = config.getDomainUpperMargin();
+
+	    if (domainUpperBound != null) {
+		domainAxis.setUpperBound(domainUpperBound.doubleValue());
+	    }
+	    if (domainLowerBound != null) {
+		domainAxis.setLowerBound(domainLowerBound.doubleValue());
+	    }
+
+	    if (domainLowerMargin != null) {
+		domainAxis.setLowerMargin(domainLowerMargin.doubleValue());
+	    }
+	    if (domainUpperMargin != null) {
+		domainAxis.setUpperMargin(domainUpperMargin.doubleValue());
+	    }
+
+	    if (config.isDomainIntegerTickUnits()) {
+		domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+	    }
+	    domainAxis.setAutoRangeIncludesZero(config.isDomainAutoRangeIncludesZero());
+
+	    NumberAxis rangeAxis = (NumberAxis) XYPlot.getRangeAxis();
+	    Double rangeLowerBound = config.getRangeLowerBound();
+	    Double rangeUpperBound = config.getRangeUpperBound();
+	    Double rangeLowerMargin = config.getRangeLowerMargin();
+	    Double rangeUpperMargin = config.getRangeUpperMargin();
+
+	    if (rangeUpperBound != null) {
+		XYPlot.getRangeAxis().setUpperBound(rangeUpperBound.doubleValue());
+	    }
+	    if (rangeLowerBound != null) {
+		XYPlot.getRangeAxis().setLowerBound(rangeLowerBound.doubleValue());
+	    }
+
+	    if (rangeLowerMargin != null) {
+		rangeAxis.setLowerMargin(rangeLowerMargin.doubleValue());
+	    }
+	    if (rangeUpperMargin != null) {
+		rangeAxis.setUpperMargin(rangeUpperMargin.doubleValue());
+	    }
+
+	    if (config.isRangeIntegerTickUnits()) {
+		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+	    }
+	    rangeAxis.setAutoRangeIncludesZero(config.isRangeAutoRangeIncludesZero());
+	}
+    }
+
     private static void setRenderer(JFreeChart chart, Configuration config) {
 	if (chart.getPlot() instanceof CategoryPlot && config.isOnlyShape()) {
 	    CategoryItemRenderer renderer = new LineAndShapeRenderer(false, true);
 	    CategoryPlot plot = (CategoryPlot) chart.getPlot();
-
 	    plot.setDomainGridlinesVisible(true);
 	    plot.setRangeGridlinesVisible(true);
-	    plot.setRangeZeroBaselineVisible(false);
-	    NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-	    rangeAxis.setAutoRangeIncludesZero(false);
-	    
 	    plot.setRenderer(renderer);
+	} else if (chart.getPlot() instanceof XYPlot && (config.getDotWidth() != 1 || config.getDotHeight() != 1)) {
+	    XYPlot XYPlot = (XYPlot) chart.getPlot();
+	    XYDotRenderer XYDotRenderer = new XYDotRenderer();
+	    if (config.getDotWidth() != 1) {
+		XYDotRenderer.setDotWidth(config.getDotWidth());
+	    }
+	    if (config.getDotHeight() != 1) {
+		XYDotRenderer.setDotHeight(config.getDotHeight());
+	    }
+	    XYPlot.setRenderer(XYDotRenderer);
 	}
     }
+
     private static void setCategoryRange(JFreeChart chart, Configuration config) {
         Double rangeLowerBound = config.getRangeLowerBound();
         Double rangeUpperBound = config.getRangeUpperBound();
