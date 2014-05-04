@@ -1,6 +1,6 @@
 /*
  *  eXist Open Source Native XML Database
- *  Copyright (C) 2009-2013 The eXist-db Project
+ *  Copyright (C) 2009-2014 The eXist-db Project
  *  http://exist-db.org
  *
  *  This program is free software; you can redistribute it and/or
@@ -45,6 +45,10 @@ public class Configuration {
     private int imageHeight = 300;
     private int imageWidth = 400;
 
+    // for XYDotRenderer
+    private int dotHeight = 1;
+    private int dotWidth = 1;
+
     // Chart title
     private String title;
 
@@ -88,6 +92,17 @@ public class Configuration {
     // Range  
     private Double rangeLowerBound;
     private Double rangeUpperBound;
+    private Double rangeLowerMargin;
+    private Double rangeUpperMargin;
+
+    // Domain
+    private Double domainLowerBound;
+    private Double domainUpperBound;
+    private Double domainLowerMargin;
+    private Double domainUpperMargin;
+
+    // Alpha
+    private Float foregroundAlpha;
 
     // Misc flags
     private boolean generateLegend = false;
@@ -95,6 +110,15 @@ public class Configuration {
     private boolean generateUrls = false;
 
     private boolean onlyShape = false;
+
+    private boolean rangeAutoRangeIncludesZero = true;
+    private boolean domainAutoRangeIncludesZero = true;
+    private boolean rangeZeroBaselineVisible = true;
+    private boolean domainZeroBaselineVisible = true;
+    private boolean rangeIntegerTickUnits = false;
+    private boolean domainIntegerTickUnits = false;
+    private boolean rangeGridlinesVisible = false;
+    private boolean domainGridlinesVisible = false;
 
     // =========================
     // Getters
@@ -134,6 +158,38 @@ public class Configuration {
         return onlyShape;
     }
 
+    public boolean isRangeAutoRangeIncludesZero() {
+        return rangeAutoRangeIncludesZero;
+    }
+
+    public boolean isDomainAutoRangeIncludesZero() {
+        return domainAutoRangeIncludesZero;
+    }
+
+    public boolean isRangeZeroBaselineVisible() {
+        return rangeZeroBaselineVisible;
+    }
+
+    public boolean isDomainZeroBaselineVisible() {
+        return domainZeroBaselineVisible;
+    }
+
+    public boolean isRangeIntegerTickUnits() {
+        return rangeIntegerTickUnits;
+    }
+
+    public boolean isDomainIntegerTickUnits() {
+        return domainIntegerTickUnits;
+    }
+
+    public boolean isRangeGridlinesVisible() {
+        return rangeGridlinesVisible;
+    }
+
+    public boolean isDomainGridlinesVisible() {
+        return domainGridlinesVisible;
+    }
+
     public PlotOrientation getOrientation() {
         return orientation;
     }
@@ -160,6 +216,14 @@ public class Configuration {
 
     public int getImageWidth() {
         return imageWidth;
+    }
+
+    public int getDotHeight() {
+        return dotHeight;
+    }
+
+    public int getDotWidth() {
+        return dotWidth;
     }
 
     public String getDomainAxisLabel() {
@@ -200,6 +264,34 @@ public class Configuration {
 
     public Double getRangeUpperBound() {
         return rangeUpperBound;
+    }
+
+    public Double getRangeLowerMargin() {
+        return rangeLowerMargin;
+    }
+
+    public Double getRangeUpperMargin() {
+        return rangeUpperMargin;
+    }
+
+    public Double getDomainLowerBound() {
+        return domainLowerBound;
+    }
+
+    public Double getDomainUpperBound() {
+        return domainUpperBound;
+    }
+
+    public Double getDomainLowerMargin() {
+        return domainLowerMargin;
+    }
+
+    public Double getDomainUpperMargin() {
+        return domainUpperMargin;
+    }
+
+    public Float getForegroundAlpha() {
+        return foregroundAlpha;
     }
 
     public String getCategoryItemLabelGeneratorClass() {
@@ -337,6 +429,46 @@ public class Configuration {
                             verifyValue(localName, onlyShape);
                             break;
 
+                        case "rangeAutoRangeIncludesZero":
+                            rangeAutoRangeIncludesZero = parseBoolean(value);
+                            verifyValue(localName, rangeAutoRangeIncludesZero);
+                            break;
+
+                        case "domainAutoRangeIncludesZero":
+                            domainAutoRangeIncludesZero = parseBoolean(value);
+                            verifyValue(localName, domainAutoRangeIncludesZero);
+                            break;
+
+                        case "rangeIntegerTickUnits":
+                            rangeIntegerTickUnits = parseBoolean(value);
+                            verifyValue(localName, rangeIntegerTickUnits);
+                            break;
+
+                        case "domainIntegerTickUnits":
+                            domainIntegerTickUnits = parseBoolean(value);
+                            verifyValue(localName, domainIntegerTickUnits);
+                            break;
+
+                        case "rangeGridlinesVisible":
+                            rangeGridlinesVisible = parseBoolean(value);
+                            verifyValue(localName, rangeGridlinesVisible);
+                            break;
+
+                        case "domainGridlinesVisible":
+                            domainGridlinesVisible = parseBoolean(value);
+                            verifyValue(localName, domainGridlinesVisible);
+                            break;
+
+                        case "rangeZeroBaselineVisible":
+                            rangeZeroBaselineVisible = parseBoolean(value);
+                            verifyValue(localName, rangeZeroBaselineVisible);
+                            break;
+
+                        case "domainZeroBaselineVisible":
+                            domainZeroBaselineVisible = parseBoolean(value);
+                            verifyValue(localName, domainZeroBaselineVisible);
+                            break;
+
                         case "width":
                             imageWidth = parseInteger(value);
                             verifyValue(localName, imageWidth);
@@ -345,6 +477,16 @@ public class Configuration {
                         case "height":
                             imageHeight = parseInteger(value);
                             verifyValue(localName, imageHeight);
+                            break;
+
+                        case "dotWidth":
+                            dotWidth = parseInteger(value);
+                            verifyValue(localName, dotWidth);
+                            break;
+
+                        case "dotHeight":
+                            dotHeight = parseInteger(value);
+                            verifyValue(localName, dotHeight);
                             break;
 
                         case "titleColor":
@@ -379,6 +521,41 @@ public class Configuration {
                         case "rangeUpperBound":
                             rangeUpperBound = parseDouble(value);
                             verifyValue(localName, rangeUpperBound);
+                            break;
+
+                        case "rangeLowerMargin":
+                            rangeLowerMargin = parseDouble(value);
+                            verifyValue(localName, rangeLowerMargin);
+                            break;
+
+                        case "rangeUpperMargin":
+                            rangeUpperMargin = parseDouble(value);
+                            verifyValue(localName, rangeUpperMargin);
+                            break;
+
+                        case "domainLowerBound":
+                            domainLowerBound = parseDouble(value);
+                            verifyValue(localName, domainLowerBound);
+                            break;
+
+                        case "domainUpperBound":
+                            domainUpperBound = parseDouble(value);
+                            verifyValue(localName, domainUpperBound);
+                            break;
+
+                        case "domainLowerMargin":
+                            domainLowerMargin = parseDouble(value);
+                            verifyValue(localName, domainLowerMargin);
+                            break;
+
+                        case "domainUpperMargin":
+                            domainUpperMargin = parseDouble(value);
+                            verifyValue(localName, domainUpperMargin);
+                            break;
+
+                        case "foregroundAlpha":
+                            foregroundAlpha = parseFloat(value);
+                            verifyValue(localName, foregroundAlpha);
                             break;
 
                         case "categoryItemLabelGeneratorClass":
@@ -460,6 +637,21 @@ public class Configuration {
 
         try {
             return Double.valueOf(value);
+
+        } catch (NumberFormatException ex) {
+            logger.debug(ex.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Parse text and return Float. NULL is returned when value cannot be
+     * converted.
+     */
+    private Float parseFloat(String value) {
+
+        try {
+            return Float.valueOf(value);
 
         } catch (NumberFormatException ex) {
             logger.debug(ex.getMessage());
