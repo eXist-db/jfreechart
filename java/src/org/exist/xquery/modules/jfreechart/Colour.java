@@ -179,9 +179,9 @@ public class Colour
      * Convert color text into color object
      *
      * @param value Name of color
-     * @return COlor object representing the color name
+     * @return Color object representing the color name
      *
-     * @throws XPathException Thrown when color can be converted.
+     * @throws XPathException Thrown when color cannot be converted.
      */
     public static Color getColor( String value ) throws XPathException
     {
@@ -192,7 +192,9 @@ public class Colour
             }
         }
         
-        if( color == null ) {
+	if ("null".equals(value)) {
+	    color = null;
+	} else if( color == null ) {
             try {
                 color = new Color( Integer.parseInt( value, 16 ) );
             }
