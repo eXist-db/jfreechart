@@ -550,6 +550,7 @@ public class JFreeChartFactory {
     
     private static void setPieChartParameters( JFreeChart chart, Configuration config )
     {
+        setPlotAndNumberAxisParameters(chart, config);
         setPieSectionLabel( chart, config );
         setSectionColors( chart, config );
     }
