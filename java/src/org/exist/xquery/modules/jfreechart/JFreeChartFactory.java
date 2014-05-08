@@ -327,6 +327,8 @@ public class JFreeChartFactory {
 	    plot.setRangeGridlinesVisible(config.isRangeGridlinesVisible());
 	    plot.setRangeZeroBaselineVisible(config.isRangeZeroBaselineVisible());
 
+	    plot.setOutlineVisible(config.isOutlineVisible());
+
 	    NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
 	    rangeAxis.setAutoRangeIncludesZero(config.isRangeAutoRangeIncludesZero());
 	    if (config.isRangeIntegerTickUnits()) {
@@ -342,6 +344,8 @@ public class JFreeChartFactory {
 	    XYPlot.setRangeGridlinesVisible(config.isRangeGridlinesVisible());
 	    XYPlot.setDomainZeroBaselineVisible(config.isDomainZeroBaselineVisible());
 	    XYPlot.setRangeZeroBaselineVisible(config.isRangeZeroBaselineVisible());
+
+	    XYPlot.setOutlineVisible(config.isOutlineVisible());
 
 	    NumberAxis domainAxis = (NumberAxis) XYPlot.getDomainAxis();
 	    Double domainLowerBound = config.getDomainLowerBound();
@@ -392,6 +396,14 @@ public class JFreeChartFactory {
 		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 	    }
 	    rangeAxis.setAutoRangeIncludesZero(config.isRangeAutoRangeIncludesZero());
+	} else 	if (chart.getPlot() instanceof PiePlot) {
+	    PiePlot plot = (PiePlot) chart.getPlot();
+	    if (config.getForegroundAlpha() != null) {
+		plot.setForegroundAlpha(config.getForegroundAlpha());
+	    }
+	    plot.setSectionOutlinesVisible(config.isPieSectionOutlinesVisible());
+	    plot.setOutlineVisible(config.isOutlineVisible());
+	    plot.setShadowPaint(config.getPieShadowColor()); //null
 	}
     }
 
@@ -538,6 +550,7 @@ public class JFreeChartFactory {
     
     private static void setPieChartParameters( JFreeChart chart, Configuration config )
     {
+        setPlotAndNumberAxisParameters(chart, config);
         setPieSectionLabel( chart, config );
         setSectionColors( chart, config );
     }
@@ -618,8 +631,6 @@ public class JFreeChartFactory {
             chart.setBackgroundPaint( chartBackgroundColor );
         }
         
-        if( plotBackgroundColor != null ) {
-            chart.getPlot().setBackgroundPaint( plotBackgroundColor );
-        }
+	chart.getPlot().setBackgroundPaint( plotBackgroundColor ); //null
     }
 }

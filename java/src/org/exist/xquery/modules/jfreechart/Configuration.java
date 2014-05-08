@@ -78,11 +78,14 @@ public class Configuration {
     // Colors   
     private Color titleColor;
     private Color chartBackgroundColor;
-    private Color plotBackgroundColor;
+    private Color plotBackgroundColor = Color.white;
 
     private Color categoryAxisColor;
     private Color timeAxisColor;
     private Color valueAxisColor;
+    
+    private Color outlineColor = Color.gray;
+    private Color pieShadowColor = new Color(151, 151, 151, 128);
 
     private String seriesColors;
 
@@ -119,6 +122,10 @@ public class Configuration {
     private boolean domainIntegerTickUnits = false;
     private boolean rangeGridlinesVisible = false;
     private boolean domainGridlinesVisible = false;
+
+    private boolean outlineVisible = true;
+    private boolean pieSectionOutlinesVisible = true;
+    
 
     // =========================
     // Getters
@@ -190,6 +197,14 @@ public class Configuration {
         return domainGridlinesVisible;
     }
 
+    public boolean isOutlineVisible() {
+        return outlineVisible;
+    }
+
+    public boolean isPieSectionOutlinesVisible() {
+        return pieSectionOutlinesVisible;
+    }
+
     public PlotOrientation getOrientation() {
         return orientation;
     }
@@ -256,6 +271,10 @@ public class Configuration {
 
     public Color getPlotBackgroundColor() {
         return plotBackgroundColor;
+    }
+
+    public Color getPieShadowColor() {
+        return pieShadowColor;
     }
 
     public Double getRangeLowerBound() {
@@ -469,6 +488,16 @@ public class Configuration {
                             verifyValue(localName, domainZeroBaselineVisible);
                             break;
 
+                        case "outlineVisible":
+                            outlineVisible = parseBoolean(value);
+                            verifyValue(localName, outlineVisible);
+                            break;
+
+                        case "pieSectionOutlinesVisible":
+                            pieSectionOutlinesVisible = parseBoolean(value);
+                            verifyValue(localName, pieSectionOutlinesVisible);
+                            break;
+
                         case "width":
                             imageWidth = parseInteger(value);
                             verifyValue(localName, imageWidth);
@@ -499,6 +528,10 @@ public class Configuration {
 
                         case "plotBackgroundColor":
                             plotBackgroundColor = Colour.getColor(value);
+                            break;
+
+                        case "pieShadowColor":
+                            pieShadowColor = Colour.getColor(value);
                             break;
 
                         case "seriesColors":
