@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<XYZDataset>
+    <Series name="series 1">
+        <Item>
+            <X>1</X>
+            <Y>1.5</Y>
+            <Z>0.5</Z>
+        </Item>
+        <Item>
+            <X>2</X>
+            <Y>1.5</Y>
+            <Z>0.25</Z>
+        </Item>
+        <Item>
+            <X>3</X>
+            <Y>1.5</Y>
+            <Z>0.45</Z>
+        </Item>
+    </Series>
+    <Series name="series 2">
+        <Item>
+            <X>1</X>
+            <Y>2</Y>
+            <Z>0.1</Z>
+        </Item>
+        <Item>
+            <X>2</X>
+            <Y>2</Y>
+            <Z>0.2</Z>
+        </Item>
+        <Item>
+            <X>3</X>
+            <Y>2</Y>
+            <Z>0.5</Z>
+        </Item>
+    </Series>
+</XYZDataset>
