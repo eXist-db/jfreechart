@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PieDataset>
+        <Item>
+            <Key>1</Key>
+            <Value>1.0</Value>
+        </Item>
+        <Item>
+            <Key>2</Key>
+            <Value>2.0</Value>
+        </Item>
+        <Item>
+            <Key>3</Key>
+            <Value>3</Value>
+        </Item>
+        <Item>
+            <Key>4</Key>
+            <Value>4.0</Value>
+        </Item>
+</PieDataset>
