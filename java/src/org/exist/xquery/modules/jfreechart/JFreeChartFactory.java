@@ -396,8 +396,14 @@ public class JFreeChartFactory {
 		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 	    }
 	    rangeAxis.setAutoRangeIncludesZero(config.isRangeAutoRangeIncludesZero());
-	} else 	if (chart.getPlot() instanceof PiePlot) {
-	    PiePlot plot = (PiePlot) chart.getPlot();
+	} else 	if (chart.getPlot() instanceof PiePlot ||
+		    chart.getPlot() instanceof MultiplePiePlot) {
+	    PiePlot plot;
+            if (chart.getPlot() instanceof MultiplePiePlot) {
+                plot = (PiePlot) ((MultiplePiePlot) chart.getPlot()).getPieChart().getPlot();
+	    } else {
+		plot = (PiePlot) chart.getPlot();
+	    }
 	    if (config.getForegroundAlpha() != null) {
 		plot.setForegroundAlpha(config.getForegroundAlpha());
 	    }
@@ -508,7 +514,7 @@ public class JFreeChartFactory {
                 Color color = null;
                 try {
                     color = Colour.getColor( colorName );
-                } catch( XPathException e ) {              
+                } catch( XPathException e ) {
                 }
                    
                 if( color != null ) {
@@ -578,10 +584,14 @@ public class JFreeChartFactory {
         String sectionColorsDelimiter = config.getSectionColorsDelimiter();
         
         if( sectionColors != null ) {
-            PiePlot plot = ((PiePlot)chart.getPlot());
+	    PiePlot plot;
+	    if (chart.getPlot() instanceof MultiplePiePlot) {
+                plot = (PiePlot) ((MultiplePiePlot) chart.getPlot()).getPieChart().getPlot();
+	    } else {
+		plot = (PiePlot) chart.getPlot();
+	    }
             
             StringTokenizer st = new StringTokenizer( sectionColors, sectionColorsDelimiter );
-            
             while( st.hasMoreTokens() ) {
                 String sectionName = st.nextToken().trim();
                 String colorName = "";
@@ -594,10 +604,9 @@ public class JFreeChartFactory {
                 
                 try {
                     color = Colour.getColor( colorName );
-                } 
-                catch( XPathException e ) {              
+                } catch( XPathException e ) {
                 }
-                   
+
                 if( color != null ) {
                     plot.setSectionPaint(sectionName, color);
 
