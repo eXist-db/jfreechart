@@ -183,26 +183,24 @@ public class Colour
      *
      * @throws XPathException Thrown when color cannot be converted.
      */
-    public static Color getColor( String value ) throws XPathException
-    {
+    public static Color getColor(String value) throws XPathException {
         Color color = null;
         for (String[] colour : colours) {
             if (value.equalsIgnoreCase(colour[0])) {
                 color = new Color(Integer.parseInt(colour[1], 16));
             }
         }
-        
-	if ("null".equals(value)) {
-	    color = null;
-	} else if( color == null ) {
+
+        if ("null".equals(value)) {
+            color = null;
+        } else if (color == null) {
             try {
-                color = new Color( Integer.parseInt( value, 16 ) );
-            }
-            catch( NumberFormatException e ) {
-                throw( new XPathException( "Cannot create color, value is not a valid color name or hex value: " + value ) );
+                color = new Color(Integer.parseInt(value, 16));
+            } catch (NumberFormatException e) {
+                throw (new XPathException("Cannot create color, value is not a valid color name or hex value: " + value));
             }
         }
-        
-        return( color );   
+
+        return (color);
     }
 }
