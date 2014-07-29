@@ -50,10 +50,10 @@ import org.xml.sax.helpers.DefaultHandler;
 public class XYZItemHandler extends DefaultHandler implements XYZDatasetTags {
 
     /** The root handler. */
-    private RootHandler root;
+    private final RootHandler root;
 
     /** The parent handler (can be the same as root, but not always). */
-    private DefaultHandler parent;
+    private final DefaultHandler parent;
 
     /** The valueX. */
     private Number valueX;

@@ -35,7 +35,6 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.SymbolAxis;
 import org.jfree.chart.labels.CategoryItemLabelGenerator;
 import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
@@ -90,19 +89,28 @@ public class JFreeChartFactory {
         XYZDataset XYZDataset = null;
 
         try {
-            if ("PieChart".equals(chartType) || "PieChart3D".equals(chartType) || "RingChart".equals(chartType)) {
-                logger.debug("Reading XML PieDataset");
-                pieDataset = DatasetReader.readPieDatasetFromXML(is);
-
-            } else if ("ScatterPlot".equals(chartType) || "XYAreaChart".equals(chartType) || "XYBarChart".equals(chartType) || "XYLineChart".equals(chartType)) {
-                logger.debug("Reading XML XYDataset");
-                XYDataset = XYDatasetReader.readXYDatasetFromXML(is);
-            } else if ("BubbleChart".equals(chartType)) {
-                logger.debug("Reading XML XYZDataset");
-                XYZDataset = XYDatasetReader.readXYZDatasetFromXML(is);
-            } else {
-                logger.debug("Reading XML CategoryDataset");
-                categoryDataset = DatasetReader.readCategoryDatasetFromXML(is);
+            if (null != chartType) switch (chartType) {
+                case "PieChart":
+                case "PieChart3D":
+                case "RingChart":
+                    logger.debug("Reading XML PieDataset");
+                    pieDataset = DatasetReader.readPieDatasetFromXML(is);
+                    break;
+                case "ScatterPlot":
+                case "XYAreaChart":
+                case "XYBarChart":
+                case "XYLineChart":
+                    logger.debug("Reading XML XYDataset");
+                    XYDataset = XYDatasetReader.readXYDatasetFromXML(is);
+                    break;
+                case "BubbleChart":
+                    logger.debug("Reading XML XYZDataset");
+                    XYZDataset = XYDatasetReader.readXYZDatasetFromXML(is);
+                    break;
+                default:
+                    logger.debug("Reading XML CategoryDataset");
+                    categoryDataset = DatasetReader.readCategoryDatasetFromXML(is);
+                    break;
             }
 
         } catch (IOException ex) {
@@ -353,19 +361,19 @@ public class JFreeChartFactory {
 	    Double domainLowerMargin = config.getDomainLowerMargin();
 	    Double domainUpperMargin = config.getDomainUpperMargin();
 
-	    if (domainUpperBound != null) {
-		domainAxis.setUpperBound(domainUpperBound.doubleValue());
-	    }
-	    if (domainLowerBound != null) {
-		domainAxis.setLowerBound(domainLowerBound.doubleValue());
-	    }
+        if (domainUpperBound != null) {
+            domainAxis.setUpperBound(domainUpperBound);
+        }
+        if (domainLowerBound != null) {
+            domainAxis.setLowerBound(domainLowerBound);
+        }
 
-	    if (domainLowerMargin != null) {
-		domainAxis.setLowerMargin(domainLowerMargin.doubleValue());
-	    }
-	    if (domainUpperMargin != null) {
-		domainAxis.setUpperMargin(domainUpperMargin.doubleValue());
-	    }
+        if (domainLowerMargin != null) {
+            domainAxis.setLowerMargin(domainLowerMargin);
+        }
+        if (domainUpperMargin != null) {
+            domainAxis.setUpperMargin(domainUpperMargin);
+        }
 
 	    if (config.isDomainIntegerTickUnits()) {
 		domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
@@ -379,17 +387,17 @@ public class JFreeChartFactory {
 	    Double rangeUpperMargin = config.getRangeUpperMargin();
 
 	    if (rangeUpperBound != null) {
-		XYPlot.getRangeAxis().setUpperBound(rangeUpperBound.doubleValue());
+		XYPlot.getRangeAxis().setUpperBound(rangeUpperBound);
 	    }
 	    if (rangeLowerBound != null) {
-		XYPlot.getRangeAxis().setLowerBound(rangeLowerBound.doubleValue());
+		XYPlot.getRangeAxis().setLowerBound(rangeLowerBound);
 	    }
 
 	    if (rangeLowerMargin != null) {
-		rangeAxis.setLowerMargin(rangeLowerMargin.doubleValue());
+		rangeAxis.setLowerMargin(rangeLowerMargin);
 	    }
 	    if (rangeUpperMargin != null) {
-		rangeAxis.setUpperMargin(rangeUpperMargin.doubleValue());
+		rangeAxis.setUpperMargin(rangeUpperMargin);
 	    }
 
 	    if (config.isRangeIntegerTickUnits()) {
@@ -439,15 +447,15 @@ public class JFreeChartFactory {
 
         if (rangeUpperBound != null) {
             if (chart.getPlot() instanceof SpiderWebPlot) {
-                ((SpiderWebPlot) chart.getPlot()).setMaxValue(rangeUpperBound.doubleValue());
+                ((SpiderWebPlot) chart.getPlot()).setMaxValue(rangeUpperBound);
                 return;
             } else {
-                ((CategoryPlot) chart.getPlot()).getRangeAxis().setUpperBound(rangeUpperBound.doubleValue());
+                ((CategoryPlot) chart.getPlot()).getRangeAxis().setUpperBound(rangeUpperBound);
             }
         }
 
         if (rangeLowerBound != null) {
-            ((CategoryPlot) chart.getPlot()).getRangeAxis().setLowerBound(rangeLowerBound.doubleValue());
+            ((CategoryPlot) chart.getPlot()).getRangeAxis().setLowerBound(rangeLowerBound);
         }
     }
     
@@ -468,7 +476,7 @@ public class JFreeChartFactory {
 
                 generator = (CategoryItemLabelGenerator) argsConstructor.newInstance(args);
             } catch (Exception e) {
-                throw (new XPathException("Cannot instantiate CategoryItemLabelGeneratorClass: " + className + ", exception: " + e));
+                throw (new XPathException(String.format("Cannot instantiate CategoryItemLabelGeneratorClass: %s, exception: %s", className, e)));
             }
 
             if (chart.getPlot() instanceof SpiderWebPlot) {

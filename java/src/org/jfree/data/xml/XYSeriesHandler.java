@@ -40,11 +40,6 @@
 
 package org.jfree.data.xml;
 
-import java.util.Iterator;
-import java.util.ArrayList;
-
-import org.jfree.data.xy.DefaultXYDataset;
-import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.xml.sax.Attributes;
@@ -58,13 +53,13 @@ public class XYSeriesHandler extends DefaultHandler
         implements XYZDatasetTags {
 
     /** The root handler. */
-    private RootHandler root;
+    private final RootHandler root;
 
     /** The series key. */
     private Comparable seriesKey;
 
     /** The values. */
-    private XYSeriesCollection values;
+    private final XYSeriesCollection values;
 
     /**
      * Creates a new item handler.
@@ -116,21 +111,23 @@ public class XYSeriesHandler extends DefaultHandler
                              String localName,
                              String qName,
                              Attributes atts) throws SAXException {
-        if (qName.equals(SERIES_TAG)) {
-            setSeriesKey(atts.getValue("name"));
-            XYZItemHandler subhandler = new XYZItemHandler(this.root, this);
-            this.root.pushSubHandler(subhandler);
-        }
-        else if (qName.equals(ITEM_TAG)) {
-            XYZItemHandler subhandler = new XYZItemHandler(this.root, this);
-            this.root.pushSubHandler(subhandler);
-            subhandler.startElement(namespaceURI, localName, qName, atts);
-        }
-
-        else {
-            throw new SAXException(
-                "Expecting <Series> or <Item> tag...found " + qName
-            );
+        switch (qName) {
+            case SERIES_TAG: {
+                setSeriesKey(atts.getValue("name"));
+                XYZItemHandler subhandler = new XYZItemHandler(this.root, this);
+                this.root.pushSubHandler(subhandler);
+                break;
+            }
+            case ITEM_TAG: {
+                XYZItemHandler subhandler = new XYZItemHandler(this.root, this);
+                this.root.pushSubHandler(subhandler);
+                subhandler.startElement(namespaceURI, localName, qName, atts);
+                break;
+            }
+            default:
+                throw new SAXException(
+                        "Expecting <Series> or <Item> tag...found " + qName
+                );
         }
     }
 

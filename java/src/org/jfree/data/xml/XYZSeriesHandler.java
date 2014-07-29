@@ -49,19 +49,18 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * A handler for reading a series for a XYZ dataset.
  */
-public class XYZSeriesHandler extends DefaultHandler
-        implements XYZDatasetTags {
+public class XYZSeriesHandler extends DefaultHandler implements XYZDatasetTags {
 
     /** The root handler. */
-    private RootHandler root;
+    private final RootHandler root;
 
     /** The series key. */
-    private ArrayList<Comparable> seriesKeys;
+    private final ArrayList<Comparable> seriesKeys;
 
     /** The values. */
-    private ArrayList<ArrayList<Double>> valuesX;
-    private ArrayList<ArrayList<Double>> valuesY;
-    private ArrayList<ArrayList<Double>> valuesZ;
+    private final ArrayList<ArrayList<Double>> valuesX;
+    private final ArrayList<ArrayList<Double>> valuesY;
+    private final ArrayList<ArrayList<Double>> valuesZ;
 
     /**
      * Creates a new item handler.
@@ -70,10 +69,10 @@ public class XYZSeriesHandler extends DefaultHandler
      */
     public XYZSeriesHandler(RootHandler root) {
         this.root = root;
-	this.seriesKeys = new ArrayList<Comparable>();
-	this.valuesX = new ArrayList<ArrayList<Double>>();
-	this.valuesY = new ArrayList<ArrayList<Double>>();
-	this.valuesZ = new ArrayList<ArrayList<Double>>();
+        this.seriesKeys = new ArrayList<>();
+        this.valuesX = new ArrayList<>();
+        this.valuesY = new ArrayList<>();
+        this.valuesZ = new ArrayList<>();
     }
 
     /**
@@ -83,9 +82,9 @@ public class XYZSeriesHandler extends DefaultHandler
      */
     public void setSeriesKey(Comparable key) {
         this.seriesKeys.add(key);
-	this.valuesX.add(new ArrayList<Double>());
-	this.valuesY.add(new ArrayList<Double>());
-	this.valuesZ.add(new ArrayList<Double>());
+        this.valuesX.add(new ArrayList<Double>());
+        this.valuesY.add(new ArrayList<Double>());
+        this.valuesZ.add(new ArrayList<Double>());
     }
 
 
@@ -108,16 +107,15 @@ public class XYZSeriesHandler extends DefaultHandler
     /**
      * Adds an item to the temporary storage for the series.
      *
-     * @param key  the key.
      * @param valueX  the X value.
      * @param valueY  the Y value.
      * @param valueZ  the Z value.
      */
     public void addItem(final double valueX, final double valueY, final double valueZ) {
-	int series = getSeriesCount() - 1;
-        this.valuesX.get(series).add(new Double(valueX));
-        this.valuesY.get(series).add(new Double(valueY));
-        this.valuesZ.get(series).add(new Double(valueZ));
+        int series = getSeriesCount() - 1;
+        this.valuesX.get(series).add(valueX);
+        this.valuesY.get(series).add(valueY);
+        this.valuesZ.get(series).add(valueZ);
     }
 
     /**
@@ -135,21 +133,23 @@ public class XYZSeriesHandler extends DefaultHandler
                              String localName,
                              String qName,
                              Attributes atts) throws SAXException {
-        if (qName.equals(SERIES_TAG)) {
-            setSeriesKey(atts.getValue("name"));
-            XYZItemHandler subhandler = new XYZItemHandler(this.root, this);
-            this.root.pushSubHandler(subhandler);
-        }
-        else if (qName.equals(ITEM_TAG)) {
-            XYZItemHandler subhandler = new XYZItemHandler(this.root, this);
-            this.root.pushSubHandler(subhandler);
-            subhandler.startElement(namespaceURI, localName, qName, atts);
-        }
-
-        else {
-            throw new SAXException(
-                "Expecting <Series> or <Item> tag...found " + qName
-            );
+        switch (qName) {
+            case SERIES_TAG: {
+                setSeriesKey(atts.getValue("name"));
+                XYZItemHandler subhandler = new XYZItemHandler(this.root, this);
+                this.root.pushSubHandler(subhandler);
+                break;
+            }
+            case ITEM_TAG: {
+                XYZItemHandler subhandler = new XYZItemHandler(this.root, this);
+                this.root.pushSubHandler(subhandler);
+                subhandler.startElement(namespaceURI, localName, qName, atts);
+                break;
+            }
+            default:
+                throw new SAXException(
+                        "Expecting <Series> or <Item> tag...found " + qName
+                );
         }
     }
 
@@ -167,20 +167,20 @@ public class XYZSeriesHandler extends DefaultHandler
 
         if (this.root instanceof XYZDatasetHandler) {
             XYZDatasetHandler handler = (XYZDatasetHandler) this.root;
-	    int seriesCount = getSeriesCount();
-	    int itemCount = this.valuesX.get(0).size();
-	    for (int series = 0; series < seriesCount; series++) {
-		double[] valuesX = new double[itemCount];
-		double[] valuesY = new double[itemCount];
-		double[] valuesZ = new double[itemCount];
-		for (int key = 0; key < itemCount; key++) {
-		    valuesX[key] = this.valuesX.get(series).get(key).doubleValue();
-		    valuesY[key] = this.valuesY.get(series).get(key).doubleValue();
-		    valuesZ[key] = this.valuesZ.get(series).get(key).doubleValue();
-		    //System.out.println("XYZSeriesHandler::values: " + getSeriesKey(series) + ":" + this.valuesX.get(series).get(key) + ":" + this.valuesY.get(series).get(key) + ":" + this.valuesZ.get(series).get(key));
-		}
-		handler.addSeries(getSeriesKey(series), valuesX, valuesY, valuesZ);
-	    }
+            int seriesCount = getSeriesCount();
+            int itemCount = this.valuesX.get(0).size();
+            for (int series = 0; series < seriesCount; series++) {
+                double[] valuesX = new double[itemCount];
+                double[] valuesY = new double[itemCount];
+                double[] valuesZ = new double[itemCount];
+                for (int key = 0; key < itemCount; key++) {
+                    valuesX[key] = this.valuesX.get(series).get(key);
+                    valuesY[key] = this.valuesY.get(series).get(key);
+                    valuesZ[key] = this.valuesZ.get(series).get(key);
+                    //System.out.println("XYZSeriesHandler::values: " + getSeriesKey(series) + ":" + this.valuesX.get(series).get(key) + ":" + this.valuesY.get(series).get(key) + ":" + this.valuesZ.get(series).get(key));
+                }
+                handler.addSeries(getSeriesKey(series), valuesX, valuesY, valuesZ);
+            }
             this.root.popSubHandler();
         }
 
