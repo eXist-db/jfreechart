@@ -300,12 +300,12 @@ public class JFreeChartFactory {
             default:
                 logger.error("Illegal chart type. Choose one of "
                         + "CategoryDataset/PieDataset: AreaChart BarChart BarChart3D "
-			+ "LineChart LineChart3D "
+                        + "LineChart LineChart3D "
                         + "MultiplePieChart MultiplePieChart3D PieChart PieChart3D "
                         + "RingChart SpiderWebChart StackedAreaChart StackedBarChart "
                         + "StackedBarChart3D WaterfallChart. "
-			+ "XYDataset: ScatterPlot XYAreaChart XYBarChart XYLineChart. "
-			+ "XYZDataset: BubbleChart.");
+                        + "XYDataset: ScatterPlot XYAreaChart XYBarChart XYLineChart. "
+                        + "XYZDataset: BubbleChart.");
 
         }
 
@@ -542,8 +542,7 @@ public class JFreeChartFactory {
         }
     }
         
-	private static void setAxisColors( JFreeChart chart, Configuration config )
-    {
+	   private static void setAxisColors(JFreeChart chart, Configuration config) {
         Color categoryAxisColor = config.getCategoryAxisColor();
         Color valueAxisColor = config.getValueAxisColor();
 
@@ -563,21 +562,17 @@ public class JFreeChartFactory {
             }
         }
     }
-    
-    
-    private static void setPieChartParameters( JFreeChart chart, Configuration config )
-    {
+
+    private static void setPieChartParameters(JFreeChart chart, Configuration config) {
         setPlotAndNumberAxisParameters(chart, config);
-        setPieSectionLabel( chart, config );
-        setSectionColors( chart, config );
+        setPieSectionLabel(chart, config);
+        setSectionColors(chart, config);
     }
-    
-    
-    private static void setPieSectionLabel( JFreeChart chart, Configuration config )
-    {
-        String pieSectionLabel          = config.getPieSectionLabel();
-        String pieSectionNumberFormat   = config.getPieSectionNumberFormat();
-        String pieSectionPercentFormat  = config.getPieSectionPercentFormat();
+
+    private static void setPieSectionLabel(JFreeChart chart, Configuration config) {
+        String pieSectionLabel = config.getPieSectionLabel();
+        String pieSectionNumberFormat = config.getPieSectionNumberFormat();
+        String pieSectionPercentFormat = config.getPieSectionPercentFormat();
         if (pieSectionLabel != null) {
             if (chart.getPlot() instanceof MultiplePiePlot) {
                 ((PiePlot) ((MultiplePiePlot) chart.getPlot()).getPieChart().getPlot()).setLabelGenerator(new StandardPieSectionLabelGenerator(pieSectionLabel, new DecimalFormat(pieSectionNumberFormat), new DecimalFormat(pieSectionPercentFormat)));
@@ -586,17 +581,15 @@ public class JFreeChartFactory {
             }
         }
     }
-    
-    
-    private static void setSectionColors( JFreeChart chart, Configuration config )
-    {
-        String sectionColors          = config.getSectionColors();
+
+    private static void setSectionColors(JFreeChart chart, Configuration config) {
+        String sectionColors = config.getSectionColors();
         String sectionColorsDelimiter = config.getSectionColorsDelimiter();
-        
+
         if (sectionColors != null) {
             if (chart.getPlot() instanceof MultiplePiePlot) {
                 chart.getPlot().setDrawingSupplier(new PiePlotDrawingSupplier(sectionColors));
-                
+
             } else {
                 PiePlot plot = (PiePlot) chart.getPlot();
 
@@ -622,18 +615,16 @@ public class JFreeChartFactory {
             }
         }
     }
-    
-    
+
     private static void setCommonParameters(JFreeChart chart, Configuration config) {
         setColors(chart, config);
     }
-    
-    
+
     private static void setColors(JFreeChart chart, Configuration config) {
-        Color titleColor            = config.getTitleColor();
-        Color chartBackgroundColor  = config.getChartBackgroundColor();
-        Color plotBackgroundColor   = config.getPlotBackgroundColor();
-        
+        Color titleColor = config.getTitleColor();
+        Color chartBackgroundColor = config.getChartBackgroundColor();
+        Color plotBackgroundColor = config.getPlotBackgroundColor();
+
         if (titleColor != null) {
             chart.getTitle().setPaint(titleColor);
         }
