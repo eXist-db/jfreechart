@@ -50,13 +50,13 @@ import org.xml.sax.helpers.DefaultHandler;
 public class XYZValueHandler extends DefaultHandler implements XYZDatasetTags {
 
     /** The root handler. */
-    private RootHandler rootHandler;
+    private final RootHandler rootHandler;
 
     /** The item handler. */
-    private XYZItemHandler itemHandler;
+    private final XYZItemHandler itemHandler;
 
     /** Storage for the current CDATA */
-    private StringBuffer currentText;
+    private final StringBuffer currentText;
 
     /**
      * Creates a new XYZ value handler.
@@ -106,40 +106,39 @@ public class XYZValueHandler extends DefaultHandler implements XYZDatasetTags {
      */
     @Override
     public void endElement(String namespaceURI,
-                           String localName,
-                           String qName) throws SAXException {
-	Number value;
-	try {
-	    value = Double.valueOf(getCurrentText());
-	    if (((Double) value).isNaN()) {
-		value = null;
-	    }
-	} catch (NumberFormatException e1) {
-	    value = null;
-	}
-	if ((qName.equals(Z_VALUE_TAG) && rootHandler instanceof XYZDatasetHandler) 
-	    || (qName.equals(Y_VALUE_TAG) && rootHandler instanceof XYDatasetHandler)) {
-	    if (qName.equals(Z_VALUE_TAG)) {
-		this.itemHandler.setZValue(value);
-	    } else if (qName.equals(Y_VALUE_TAG)) {
-		this.itemHandler.setYValue(value);
-	    }
+            String localName,
+            String qName) throws SAXException {
+        Number value;
+        try {
+            value = Double.valueOf(getCurrentText());
+            if (((Double) value).isNaN()) {
+                value = null;
+            }
+        } catch (NumberFormatException e1) {
+            value = null;
+        }
+        if ((qName.equals(Z_VALUE_TAG) && rootHandler instanceof XYZDatasetHandler)
+                || (qName.equals(Y_VALUE_TAG) && rootHandler instanceof XYDatasetHandler)) {
+            if (qName.equals(Z_VALUE_TAG)) {
+                this.itemHandler.setZValue(value);
+            } else if (qName.equals(Y_VALUE_TAG)) {
+                this.itemHandler.setYValue(value);
+            }
             //this.rootHandler.popSubHandler();
             //this.rootHandler.pushSubHandler(
             //    new XYZValueHandler(this.rootHandler, this.itemHandler)
             //);
-	} else if (qName.equals(X_VALUE_TAG) || (qName.equals(Y_VALUE_TAG) && rootHandler instanceof XYZDatasetHandler)) {
-	    if (qName.equals(X_VALUE_TAG)) {
-		this.itemHandler.setXValue(value);
-	    } else if (qName.equals(Y_VALUE_TAG)) {
-		this.itemHandler.setYValue(value);
-	    }
+        } else if (qName.equals(X_VALUE_TAG) || (qName.equals(Y_VALUE_TAG) && rootHandler instanceof XYZDatasetHandler)) {
+            if (qName.equals(X_VALUE_TAG)) {
+                this.itemHandler.setXValue(value);
+            } else if (qName.equals(Y_VALUE_TAG)) {
+                this.itemHandler.setYValue(value);
+            }
             this.rootHandler.popSubHandler();
-	} else if (qName.equals(ITEM_TAG)) {
-	    this.itemHandler.addSeriesItem();
+        } else if (qName.equals(ITEM_TAG)) {
+            this.itemHandler.addSeriesItem();
             this.rootHandler.popSubHandler();
-        }
-        else {
+        } else {
             throw new SAXException("Expecting </Item>, </X>, </Y>, or </Z> but found " + qName);
         }
 

@@ -167,7 +167,11 @@ public class JFreeCharting extends BasicFunction {
             }
             
 
-        } catch (Exception ex) {
+        } catch (XPathException ex) {
+            LOG.error(ex);
+            throw ex;
+            
+        } catch (IOException ex) {
             LOG.error(ex);
             throw new XPathException(this, ex.getMessage());
         }

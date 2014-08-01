@@ -58,18 +58,22 @@ public class JFreeChartModule extends AbstractInternalModule {
         declareVariable(EXCEPTION_MESSAGE_QNAME, null);
     }
 
+    @Override
     public String getDescription() {
         return "A module for generating charts using the JFreeChart library.";
     }
 
+    @Override
     public String getNamespaceURI() {
         return NAMESPACE_URI;
     }
 
+    @Override
     public String getDefaultPrefix() {
         return PREFIX;
     }
 
+    @Override
     public String getReleaseVersion() {
         return RELEASED_IN_VERSION;
     }

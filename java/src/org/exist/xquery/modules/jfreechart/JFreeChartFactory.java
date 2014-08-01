@@ -35,7 +35,6 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.SymbolAxis;
 import org.jfree.chart.labels.CategoryItemLabelGenerator;
 import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
@@ -90,19 +89,28 @@ public class JFreeChartFactory {
         XYZDataset XYZDataset = null;
 
         try {
-            if ("PieChart".equals(chartType) || "PieChart3D".equals(chartType) || "RingChart".equals(chartType)) {
-                logger.debug("Reading XML PieDataset");
-                pieDataset = DatasetReader.readPieDatasetFromXML(is);
-
-            } else if ("ScatterPlot".equals(chartType) || "XYAreaChart".equals(chartType) || "XYBarChart".equals(chartType) || "XYLineChart".equals(chartType)) {
-                logger.debug("Reading XML XYDataset");
-                XYDataset = XYDatasetReader.readXYDatasetFromXML(is);
-            } else if ("BubbleChart".equals(chartType)) {
-                logger.debug("Reading XML XYZDataset");
-                XYZDataset = XYDatasetReader.readXYZDatasetFromXML(is);
-            } else {
-                logger.debug("Reading XML CategoryDataset");
-                categoryDataset = DatasetReader.readCategoryDatasetFromXML(is);
+            if (null != chartType) switch (chartType) {
+                case "PieChart":
+                case "PieChart3D":
+                case "RingChart":
+                    logger.debug("Reading XML PieDataset");
+                    pieDataset = DatasetReader.readPieDatasetFromXML(is);
+                    break;
+                case "ScatterPlot":
+                case "XYAreaChart":
+                case "XYBarChart":
+                case "XYLineChart":
+                    logger.debug("Reading XML XYDataset");
+                    XYDataset = XYDatasetReader.readXYDatasetFromXML(is);
+                    break;
+                case "BubbleChart":
+                    logger.debug("Reading XML XYZDataset");
+                    XYZDataset = XYDatasetReader.readXYZDatasetFromXML(is);
+                    break;
+                default:
+                    logger.debug("Reading XML CategoryDataset");
+                    categoryDataset = DatasetReader.readCategoryDatasetFromXML(is);
+                    break;
             }
 
         } catch (IOException ex) {
@@ -292,12 +300,12 @@ public class JFreeChartFactory {
             default:
                 logger.error("Illegal chart type. Choose one of "
                         + "CategoryDataset/PieDataset: AreaChart BarChart BarChart3D "
-			+ "LineChart LineChart3D "
+                        + "LineChart LineChart3D "
                         + "MultiplePieChart MultiplePieChart3D PieChart PieChart3D "
                         + "RingChart SpiderWebChart StackedAreaChart StackedBarChart "
                         + "StackedBarChart3D WaterfallChart. "
-			+ "XYDataset: ScatterPlot XYAreaChart XYBarChart XYLineChart. "
-			+ "XYZDataset: BubbleChart.");
+                        + "XYDataset: ScatterPlot XYAreaChart XYBarChart XYLineChart. "
+                        + "XYZDataset: BubbleChart.");
 
         }
 
@@ -308,7 +316,7 @@ public class JFreeChartFactory {
     
     
     private static void setCategoryChartParameters(JFreeChart chart, Configuration config) throws XPathException {
-	setPlotAndNumberAxisParameters(chart, config);
+	       setPlotAndNumberAxisParameters(chart, config);
         setCategoryRange(chart, config);
         setCategoryItemLabelGenerator(chart, config);
         setCategoryLabelPositions(chart, config);
@@ -317,120 +325,123 @@ public class JFreeChartFactory {
     }
     
     private static void setPlotAndNumberAxisParameters(JFreeChart chart, Configuration config) {
-	setRenderer(chart, config);
-	if (chart.getPlot() instanceof CategoryPlot) {
-	    CategoryPlot plot = (CategoryPlot) chart.getPlot();
-	    if (config.getForegroundAlpha() != null) {
-		plot.setForegroundAlpha(config.getForegroundAlpha());
-	    }
-	    plot.setDomainGridlinesVisible(config.isDomainGridlinesVisible());
-	    plot.setRangeGridlinesVisible(config.isRangeGridlinesVisible());
-	    plot.setRangeZeroBaselineVisible(config.isRangeZeroBaselineVisible());
+        setRenderer(chart, config);
+        if (chart.getPlot() instanceof CategoryPlot) {
+            CategoryPlot plot = (CategoryPlot) chart.getPlot();
+            if (config.getForegroundAlpha() != null) {
+                plot.setForegroundAlpha(config.getForegroundAlpha());
+            }
+            plot.setDomainGridlinesVisible(config.isDomainGridlinesVisible());
+            plot.setRangeGridlinesVisible(config.isRangeGridlinesVisible());
+            plot.setRangeZeroBaselineVisible(config.isRangeZeroBaselineVisible());
 
-	    plot.setOutlineVisible(config.isOutlineVisible());
+            plot.setOutlineVisible(config.isOutlineVisible());
 
-	    NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-	    rangeAxis.setAutoRangeIncludesZero(config.isRangeAutoRangeIncludesZero());
-	    if (config.isRangeIntegerTickUnits()) {
-		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-	    }
-	} else if (chart.getPlot() instanceof XYPlot) {
-	    XYPlot XYPlot = (XYPlot) chart.getPlot();
-	    if (config.getForegroundAlpha() != null) {
-		XYPlot.setForegroundAlpha(config.getForegroundAlpha());
-	    }
+            NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+            rangeAxis.setAutoRangeIncludesZero(config.isRangeAutoRangeIncludesZero());
+            if (config.isRangeIntegerTickUnits()) {
+                rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+            }
+            
+        } else if (chart.getPlot() instanceof XYPlot) {
+            XYPlot XYPlot = (XYPlot) chart.getPlot();
+            if (config.getForegroundAlpha() != null) {
+                XYPlot.setForegroundAlpha(config.getForegroundAlpha());
+            }
 
-	    XYPlot.setDomainGridlinesVisible(config.isDomainGridlinesVisible());
-	    XYPlot.setRangeGridlinesVisible(config.isRangeGridlinesVisible());
-	    XYPlot.setDomainZeroBaselineVisible(config.isDomainZeroBaselineVisible());
-	    XYPlot.setRangeZeroBaselineVisible(config.isRangeZeroBaselineVisible());
+            XYPlot.setDomainGridlinesVisible(config.isDomainGridlinesVisible());
+            XYPlot.setRangeGridlinesVisible(config.isRangeGridlinesVisible());
+            XYPlot.setDomainZeroBaselineVisible(config.isDomainZeroBaselineVisible());
+            XYPlot.setRangeZeroBaselineVisible(config.isRangeZeroBaselineVisible());
 
-	    XYPlot.setOutlineVisible(config.isOutlineVisible());
+            XYPlot.setOutlineVisible(config.isOutlineVisible());
 
-	    NumberAxis domainAxis = (NumberAxis) XYPlot.getDomainAxis();
-	    Double domainLowerBound = config.getDomainLowerBound();
-	    Double domainUpperBound = config.getDomainUpperBound();
-	    Double domainLowerMargin = config.getDomainLowerMargin();
-	    Double domainUpperMargin = config.getDomainUpperMargin();
+            NumberAxis domainAxis = (NumberAxis) XYPlot.getDomainAxis();
+            Double domainLowerBound = config.getDomainLowerBound();
+            Double domainUpperBound = config.getDomainUpperBound();
+            Double domainLowerMargin = config.getDomainLowerMargin();
+            Double domainUpperMargin = config.getDomainUpperMargin();
 
-	    if (domainUpperBound != null) {
-		domainAxis.setUpperBound(domainUpperBound.doubleValue());
-	    }
-	    if (domainLowerBound != null) {
-		domainAxis.setLowerBound(domainLowerBound.doubleValue());
-	    }
+            if (domainUpperBound != null) {
+                domainAxis.setUpperBound(domainUpperBound);
+            }
+            if (domainLowerBound != null) {
+                domainAxis.setLowerBound(domainLowerBound);
+            }
 
-	    if (domainLowerMargin != null) {
-		domainAxis.setLowerMargin(domainLowerMargin.doubleValue());
-	    }
-	    if (domainUpperMargin != null) {
-		domainAxis.setUpperMargin(domainUpperMargin.doubleValue());
-	    }
+            if (domainLowerMargin != null) {
+                domainAxis.setLowerMargin(domainLowerMargin);
+            }
+            if (domainUpperMargin != null) {
+                domainAxis.setUpperMargin(domainUpperMargin);
+            }
 
-	    if (config.isDomainIntegerTickUnits()) {
-		domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-	    }
-	    domainAxis.setAutoRangeIncludesZero(config.isDomainAutoRangeIncludesZero());
+            if (config.isDomainIntegerTickUnits()) {
+                domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+            }
+            domainAxis.setAutoRangeIncludesZero(config.isDomainAutoRangeIncludesZero());
 
-	    NumberAxis rangeAxis = (NumberAxis) XYPlot.getRangeAxis();
-	    Double rangeLowerBound = config.getRangeLowerBound();
-	    Double rangeUpperBound = config.getRangeUpperBound();
-	    Double rangeLowerMargin = config.getRangeLowerMargin();
-	    Double rangeUpperMargin = config.getRangeUpperMargin();
+            NumberAxis rangeAxis = (NumberAxis) XYPlot.getRangeAxis();
+            Double rangeLowerBound = config.getRangeLowerBound();
+            Double rangeUpperBound = config.getRangeUpperBound();
+            Double rangeLowerMargin = config.getRangeLowerMargin();
+            Double rangeUpperMargin = config.getRangeUpperMargin();
 
-	    if (rangeUpperBound != null) {
-		XYPlot.getRangeAxis().setUpperBound(rangeUpperBound.doubleValue());
-	    }
-	    if (rangeLowerBound != null) {
-		XYPlot.getRangeAxis().setLowerBound(rangeLowerBound.doubleValue());
-	    }
+            if (rangeUpperBound != null) {
+                XYPlot.getRangeAxis().setUpperBound(rangeUpperBound);
+            }
+            if (rangeLowerBound != null) {
+                XYPlot.getRangeAxis().setLowerBound(rangeLowerBound);
+            }
 
-	    if (rangeLowerMargin != null) {
-		rangeAxis.setLowerMargin(rangeLowerMargin.doubleValue());
-	    }
-	    if (rangeUpperMargin != null) {
-		rangeAxis.setUpperMargin(rangeUpperMargin.doubleValue());
-	    }
+            if (rangeLowerMargin != null) {
+                rangeAxis.setLowerMargin(rangeLowerMargin);
+            }
+            if (rangeUpperMargin != null) {
+                rangeAxis.setUpperMargin(rangeUpperMargin);
+            }
 
-	    if (config.isRangeIntegerTickUnits()) {
-		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-	    }
-	    rangeAxis.setAutoRangeIncludesZero(config.isRangeAutoRangeIncludesZero());
-	} else 	if (chart.getPlot() instanceof PiePlot ||
-		    chart.getPlot() instanceof MultiplePiePlot) {
-	    PiePlot plot;
+            if (config.isRangeIntegerTickUnits()) {
+                rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+            }
+            rangeAxis.setAutoRangeIncludesZero(config.isRangeAutoRangeIncludesZero());
+            
+        } else if (chart.getPlot() instanceof PiePlot  || chart.getPlot() instanceof MultiplePiePlot) {
+            PiePlot plot;
             if (chart.getPlot() instanceof MultiplePiePlot) {
                 plot = (PiePlot) ((MultiplePiePlot) chart.getPlot()).getPieChart().getPlot();
-	    } else {
-		plot = (PiePlot) chart.getPlot();
-	    }
-	    if (config.getForegroundAlpha() != null) {
-		plot.setForegroundAlpha(config.getForegroundAlpha());
-	    }
-	    plot.setSectionOutlinesVisible(config.isPieSectionOutlinesVisible());
-	    plot.setOutlineVisible(config.isOutlineVisible());
-	    plot.setShadowPaint(config.getPieShadowColor()); //null
-	}
+            } else {
+                plot = (PiePlot) chart.getPlot();
+            }
+            
+            if (config.getForegroundAlpha() != null) {
+                plot.setForegroundAlpha(config.getForegroundAlpha());
+            }
+            
+            plot.setSectionOutlinesVisible(config.isPieSectionOutlinesVisible());
+            plot.setOutlineVisible(config.isOutlineVisible());
+            plot.setShadowPaint(config.getPieShadowColor()); //null
+        }
     }
 
     private static void setRenderer(JFreeChart chart, Configuration config) {
-	if (chart.getPlot() instanceof CategoryPlot && config.isOnlyShape()) {
-	    CategoryItemRenderer renderer = new LineAndShapeRenderer(false, true);
-	    CategoryPlot plot = (CategoryPlot) chart.getPlot();
-	    plot.setDomainGridlinesVisible(true);
-	    plot.setRangeGridlinesVisible(true);
-	    plot.setRenderer(renderer);
-	} else if (chart.getPlot() instanceof XYPlot && (config.getDotWidth() != 1 || config.getDotHeight() != 1)) {
-	    XYPlot XYPlot = (XYPlot) chart.getPlot();
-	    XYDotRenderer XYDotRenderer = new XYDotRenderer();
-	    if (config.getDotWidth() != 1) {
-		XYDotRenderer.setDotWidth(config.getDotWidth());
-	    }
-	    if (config.getDotHeight() != 1) {
-		XYDotRenderer.setDotHeight(config.getDotHeight());
-	    }
-	    XYPlot.setRenderer(XYDotRenderer);
-	}
+        if (chart.getPlot() instanceof CategoryPlot && config.isOnlyShape()) {
+            CategoryItemRenderer renderer = new LineAndShapeRenderer(false, true);
+            CategoryPlot plot = (CategoryPlot) chart.getPlot();
+            plot.setDomainGridlinesVisible(true);
+            plot.setRangeGridlinesVisible(true);
+            plot.setRenderer(renderer);
+        } else if (chart.getPlot() instanceof XYPlot && (config.getDotWidth() != 1 || config.getDotHeight() != 1)) {
+            XYPlot XYPlot = (XYPlot) chart.getPlot();
+            XYDotRenderer XYDotRenderer = new XYDotRenderer();
+            if (config.getDotWidth() != 1) {
+                XYDotRenderer.setDotWidth(config.getDotWidth());
+            }
+            if (config.getDotHeight() != 1) {
+                XYDotRenderer.setDotHeight(config.getDotHeight());
+            }
+            XYPlot.setRenderer(XYDotRenderer);
+        }
     }
 
     private static void setCategoryRange(JFreeChart chart, Configuration config) {
@@ -439,15 +450,15 @@ public class JFreeChartFactory {
 
         if (rangeUpperBound != null) {
             if (chart.getPlot() instanceof SpiderWebPlot) {
-                ((SpiderWebPlot) chart.getPlot()).setMaxValue(rangeUpperBound.doubleValue());
+                ((SpiderWebPlot) chart.getPlot()).setMaxValue(rangeUpperBound);
                 return;
             } else {
-                ((CategoryPlot) chart.getPlot()).getRangeAxis().setUpperBound(rangeUpperBound.doubleValue());
+                ((CategoryPlot) chart.getPlot()).getRangeAxis().setUpperBound(rangeUpperBound);
             }
         }
 
         if (rangeLowerBound != null) {
-            ((CategoryPlot) chart.getPlot()).getRangeAxis().setLowerBound(rangeLowerBound.doubleValue());
+            ((CategoryPlot) chart.getPlot()).getRangeAxis().setLowerBound(rangeLowerBound);
         }
     }
     
@@ -467,8 +478,9 @@ public class JFreeChartFactory {
                 Constructor argsConstructor = generatorClass.getConstructor(argsClass);
 
                 generator = (CategoryItemLabelGenerator) argsConstructor.newInstance(args);
-            } catch (Exception e) {
-                throw (new XPathException("Cannot instantiate CategoryItemLabelGeneratorClass: " + className + ", exception: " + e));
+                
+            } catch (ReflectiveOperationException  | RuntimeException  e) {
+                throw (new XPathException(String.format("Cannot instantiate CategoryItemLabelGeneratorClass: %s, exception: %s", className, e)));
             }
 
             if (chart.getPlot() instanceof SpiderWebPlot) {
@@ -478,96 +490,89 @@ public class JFreeChartFactory {
 
                 renderer.setBaseItemLabelGenerator(generator);
 
+                // This method should no longer be used (as of version 1.0.6).
+                // It is sufficient to rely on {@link #setSeriesItemLabelsVisible(int,
+                // Boolean)} and {@link #setBaseItemLabelsVisible(boolean)}.
                 renderer.setItemLabelsVisible(true);
             }
         }
     }
     
-    private static void setCategoryLabelPositions( JFreeChart chart, Configuration config )
-    {
-        CategoryLabelPositions positions  = config.getCategoryLabelPositions();
-	if (chart.getPlot() instanceof CategoryPlot) {
-	    ((CategoryPlot)chart.getPlot()).getDomainAxis().setCategoryLabelPositions(positions);
-	}
+    private static void setCategoryLabelPositions(JFreeChart chart, Configuration config) {
+        CategoryLabelPositions positions = config.getCategoryLabelPositions();
+        if (chart.getPlot() instanceof CategoryPlot) {
+            ((CategoryPlot) chart.getPlot()).getDomainAxis().setCategoryLabelPositions(positions);
+        }
     }
-    
-    private static void setSeriesColors( JFreeChart chart, Configuration config )
-    {
-        String seriesColors          = config.getSeriesColors();
-        
+
+    private static void setSeriesColors(JFreeChart chart, Configuration config) {
+        String seriesColors = config.getSeriesColors();
 
         if (chart.getPlot() instanceof SpiderWebPlot) {
             setSeriesColors((SpiderWebPlot) chart.getPlot(), seriesColors);
         } else {
-            CategoryItemRenderer renderer = ((CategoryPlot)chart.getPlot()).getRenderer();
+            CategoryItemRenderer renderer = ((CategoryPlot) chart.getPlot()).getRenderer();
             setSeriesColors(renderer, seriesColors);
         }
     }
 
     private static void setSeriesColors(Object renderer, final String seriesColors) {
         if (seriesColors != null) {
-            StringTokenizer st = new StringTokenizer( seriesColors, "," );
+            StringTokenizer st = new StringTokenizer(seriesColors, ",");
 
             int i = 0;
-            while( st.hasMoreTokens() ) {
+            while (st.hasMoreTokens()) {
                 String colorName = st.nextToken().trim();
-                Color color = null;
+
                 try {
-                    color = Colour.getColor( colorName );
-                } catch( XPathException e ) {
-                }
-                   
-                if( color != null ) {
+                    Color color = Colour.getColor(colorName);
+
                     if (renderer instanceof SpiderWebPlot) {
                         ((SpiderWebPlot) renderer).setSeriesPaint(i, color);
                     } else {
-                        ((CategoryItemRenderer) renderer).setSeriesPaint( i, color );
+                        ((CategoryItemRenderer) renderer).setSeriesPaint(i, color);
                     }
-                } else {
-                    logger.warn( "Invalid colour name or hex value specified for SeriesColors: " + colorName + ", default colour will be used instead." );
+                    
+                } catch (XPathException e) {
+                    logger.warn("Invalid colour name or hex value specified for SeriesColors: " + colorName + ", default colour will be used instead.");
                 }
-                
+
                 i++;
             }
         }
-    }	
+    }
         
-	private static void setAxisColors( JFreeChart chart, Configuration config )
-    {
-        Color categoryAxisColor          = config.getCategoryAxisColor();
-		Color valueAxisColor          	 = config.getValueAxisColor();
-        
-        if( categoryAxisColor != null ) {
+	   private static void setAxisColors(JFreeChart chart, Configuration config) {
+        Color categoryAxisColor = config.getCategoryAxisColor();
+        Color valueAxisColor = config.getValueAxisColor();
+
+        if (categoryAxisColor != null) {
             if (chart.getPlot() instanceof SpiderWebPlot) {
                 ((SpiderWebPlot) chart.getPlot()).setAxisLinePaint(categoryAxisColor);
             } else {
-                ((CategoryPlot)chart.getPlot()).getDomainAxis().setLabelPaint(categoryAxisColor);         }
+                ((CategoryPlot) chart.getPlot()).getDomainAxis().setLabelPaint(categoryAxisColor);
+            }
         }
-		
-		if( valueAxisColor != null ) {
+
+        if (valueAxisColor != null) {
             if (chart.getPlot() instanceof SpiderWebPlot) {
                 //((SpiderWebPlot) chart.getPlot()).setAxisLinePaint(valueAxisColor);
             } else {
-                ((CategoryPlot)chart.getPlot()).getRangeAxis().setLabelPaint( valueAxisColor );  
+                ((CategoryPlot) chart.getPlot()).getRangeAxis().setLabelPaint(valueAxisColor);
             }
         }
     }
-    
-    
-    private static void setPieChartParameters( JFreeChart chart, Configuration config )
-    {
+
+    private static void setPieChartParameters(JFreeChart chart, Configuration config) {
         setPlotAndNumberAxisParameters(chart, config);
-        setPieSectionLabel( chart, config );
-        setSectionColors( chart, config );
+        setPieSectionLabel(chart, config);
+        setSectionColors(chart, config);
     }
-    
-    
-    private static void setPieSectionLabel( JFreeChart chart, Configuration config )
-    {
-        String pieSectionLabel          = config.getPieSectionLabel();
-        String pieSectionNumberFormat   = config.getPieSectionNumberFormat();
-        String pieSectionPercentFormat  = config.getPieSectionPercentFormat();
-        
+
+    private static void setPieSectionLabel(JFreeChart chart, Configuration config) {
+        String pieSectionLabel = config.getPieSectionLabel();
+        String pieSectionNumberFormat = config.getPieSectionNumberFormat();
+        String pieSectionPercentFormat = config.getPieSectionPercentFormat();
         if (pieSectionLabel != null) {
             if (chart.getPlot() instanceof MultiplePiePlot) {
                 ((PiePlot) ((MultiplePiePlot) chart.getPlot()).getPieChart().getPlot()).setLabelGenerator(new StandardPieSectionLabelGenerator(pieSectionLabel, new DecimalFormat(pieSectionNumberFormat), new DecimalFormat(pieSectionPercentFormat)));
@@ -576,71 +581,61 @@ public class JFreeChartFactory {
             }
         }
     }
-    
-    
-    private static void setSectionColors( JFreeChart chart, Configuration config )
-    {
-        String sectionColors          = config.getSectionColors();
+
+    private static void setSectionColors(JFreeChart chart, Configuration config) {
+        String sectionColors = config.getSectionColors();
         String sectionColorsDelimiter = config.getSectionColorsDelimiter();
-        
-        if( sectionColors != null ) {
-	    if (chart.getPlot() instanceof MultiplePiePlot) {
-		chart.getPlot().setDrawingSupplier(new PiePlotDrawingSupplier(sectionColors));
-	    } else {
-		PiePlot plot = (PiePlot) chart.getPlot();
 
-		StringTokenizer st = new StringTokenizer( sectionColors, sectionColorsDelimiter );
-		while( st.hasMoreTokens() ) {
-		    String sectionName = st.nextToken().trim();
-		    String colorName = "";
+        if (sectionColors != null) {
+            if (chart.getPlot() instanceof MultiplePiePlot) {
+                chart.getPlot().setDrawingSupplier(new PiePlotDrawingSupplier(sectionColors));
 
-		    if( st.hasMoreTokens() ) {
-			colorName = st.nextToken().trim();
-		    }
+            } else {
+                PiePlot plot = (PiePlot) chart.getPlot();
 
-		    Color color = null;
+                StringTokenizer st = new StringTokenizer(sectionColors, sectionColorsDelimiter);
+                while (st.hasMoreTokens()) {
+                    String sectionName = st.nextToken().trim();
+                    String colorName = "";
 
-		    try {
-			color = Colour.getColor( colorName );
-		    } catch( XPathException e ) {
-		    }
+                    if (st.hasMoreTokens()) {
+                        colorName = st.nextToken().trim();
+                    }
 
-		    if( color != null ) {
-			plot.setSectionPaint(sectionName, color);
-		    } else {
-			logger.warn(MessageFormat.format("Invalid colour name or hex value specified for "
-                            + "SectionColors: {0}, default colour will be used instead. "
-                            + "Section Name: {1}", colorName, sectionName));
-		    }
-		}
-	    }
+                    try {
+                        Color color = Colour.getColor(colorName);
+                        plot.setSectionPaint(sectionName, color);
+                    } catch (XPathException e) {
+                        logger.warn(MessageFormat.format("Invalid colour name or hex value specified for "
+                                + "SectionColors: {0}, default colour will be used instead. "
+                                + "Section Name: {1}", colorName, sectionName));
+                    }
+
+                }
+            }
         }
     }
-    
-    
-    private static void setCommonParameters( JFreeChart chart, Configuration config )
-    {
-        setColors( chart, config );
+
+    private static void setCommonParameters(JFreeChart chart, Configuration config) {
+        setColors(chart, config);
     }
-    
-    
-     private static void setColors( JFreeChart chart, Configuration config )
-    {
-        Color titleColor            = config.getTitleColor();
-        Color chartBackgroundColor  = config.getChartBackgroundColor();
-        Color plotBackgroundColor   = config.getPlotBackgroundColor();
-        
-        if( titleColor != null ) {
-            chart.getTitle().setPaint( titleColor );
+
+    private static void setColors(JFreeChart chart, Configuration config) {
+        Color titleColor = config.getTitleColor();
+        Color chartBackgroundColor = config.getChartBackgroundColor();
+        Color plotBackgroundColor = config.getPlotBackgroundColor();
+
+        if (titleColor != null) {
+            chart.getTitle().setPaint(titleColor);
         }
-        
-        if( chartBackgroundColor != null ) {
-            chart.setBackgroundPaint( chartBackgroundColor );
+
+        if (chartBackgroundColor != null) {
+            chart.setBackgroundPaint(chartBackgroundColor);
         }
-        
-	chart.getPlot().setBackgroundPaint( plotBackgroundColor ); //null
-	if (chart.getPlot() instanceof MultiplePiePlot) {
-	    ((PiePlot) ((MultiplePiePlot) chart.getPlot()).getPieChart().getPlot()).setBackgroundPaint(plotBackgroundColor); //null
-	}
+
+        chart.getPlot().setBackgroundPaint(plotBackgroundColor); //null
+        if (chart.getPlot() instanceof MultiplePiePlot) {
+            ((PiePlot) ((MultiplePiePlot) chart.getPlot()).getPieChart().getPlot()).setBackgroundPaint(plotBackgroundColor); //null
+        }
     }
 }

@@ -84,7 +84,7 @@ public class Configuration {
     private Color timeAxisColor;
     private Color valueAxisColor;
     
-    private Color outlineColor = Color.gray;
+    private final Color outlineColor = Color.gray; // Not used
     private Color pieShadowColor = new Color(151, 151, 151, 128);
 
     private String seriesColors;

@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
 import org.exist.xquery.XPathException;
-import org.jfree.chart.ChartColor;
 import org.jfree.chart.plot.DefaultDrawingSupplier;
 
 /**
@@ -41,45 +40,43 @@ import org.jfree.chart.plot.DefaultDrawingSupplier;
 public class PiePlotDrawingSupplier extends DefaultDrawingSupplier {
 
     private final static Logger logger = Logger.getLogger(PiePlotDrawingSupplier.class);
-    private Paint[] paints;
+    private final Paint[] paints;
     private int index;
 
     PiePlotDrawingSupplier() {
-	paints = DefaultDrawingSupplier.DEFAULT_PAINT_SEQUENCE;
+        paints = DefaultDrawingSupplier.DEFAULT_PAINT_SEQUENCE;
     }
     
     PiePlotDrawingSupplier(final String sectionColors) {
-	List<Paint> list = new ArrayList<Paint>();
+        List<Paint> list = new ArrayList<>();
         list.addAll(getPaintList(sectionColors));
         list.addAll(Arrays.asList(DefaultDrawingSupplier.DEFAULT_PAINT_SEQUENCE));
         Paint[] newPaints = list.toArray(new Paint[0]);
-	this.paints = newPaints;
+        this.paints = newPaints;
     }
 
     @Override
     public Paint getNextPaint() {
-	Paint paint = paints[index % paints.length];
-	index++;
-	return paint;  
+        Paint paint = paints[index % paints.length];
+        index++;
+        return paint;
     }
 
     public List<Paint> getPaintList(final String colors) {
-	List<Paint> paints = new ArrayList<Paint>();
-	StringTokenizer st = new StringTokenizer(colors, ",");
-	while(st.hasMoreTokens()) {
-	    String colorName = st.nextToken().trim();
-	    Color color = null;
-	    try {
-		color = Colour.getColor(colorName);
-	    } catch( XPathException e ) {
-	    }
+        List<Paint> paints = new ArrayList<>();
+        StringTokenizer st = new StringTokenizer(colors, ",");
+        while (st.hasMoreTokens()) {
+            String colorName = st.nextToken().trim();
+ 
+            try {
+                Color color = Colour.getColor(colorName);
+                paints.add(color);
+                
+            } catch (XPathException e) {
+                logger.warn(String.format("Invalid colour name or hex value specified for sectionColors: %s, default colour will be used instead.", colorName));
+            }
 
-	    if (color != null) {
-		paints.add(color);
-	    } else {
-		logger.warn( "Invalid colour name or hex value specified for sectionColors: " + colorName + ", default colour will be used instead." );
-	    }
-	}
-	return paints;
+        }
+        return paints;
     }
 }
