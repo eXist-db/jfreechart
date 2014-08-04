@@ -327,17 +327,18 @@ public class JFreeChartFactory {
     private static void setPlotAndNumberAxisParameters(JFreeChart chart, Configuration config) {
         setRenderer(chart, config);
         if (chart.getPlot() instanceof CategoryPlot) {
-            CategoryPlot plot = (CategoryPlot) chart.getPlot();
+            CategoryPlot categoryPlot = (CategoryPlot) chart.getPlot();
             if (config.getForegroundAlpha() != null) {
-                plot.setForegroundAlpha(config.getForegroundAlpha());
+                categoryPlot.setForegroundAlpha(config.getForegroundAlpha());
             }
-            plot.setDomainGridlinesVisible(config.isDomainGridlinesVisible());
-            plot.setRangeGridlinesVisible(config.isRangeGridlinesVisible());
-            plot.setRangeZeroBaselineVisible(config.isRangeZeroBaselineVisible());
+            categoryPlot.setDomainGridlinesVisible(config.isDomainGridlinesVisible());
+            categoryPlot.setRangeGridlinesVisible(config.isRangeGridlinesVisible());
+            categoryPlot.setRangeZeroBaselineVisible(config.isRangeZeroBaselineVisible());
 
-            plot.setOutlineVisible(config.isOutlineVisible());
+            categoryPlot.setOutlineVisible(config.isOutlineVisible());
+            categoryPlot.setOutlinePaint(config.getOutlineColor()); //null
 
-            NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+            NumberAxis rangeAxis = (NumberAxis) categoryPlot.getRangeAxis();
             rangeAxis.setAutoRangeIncludesZero(config.isRangeAutoRangeIncludesZero());
             if (config.isRangeIntegerTickUnits()) {
                 rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
@@ -355,6 +356,7 @@ public class JFreeChartFactory {
             XYPlot.setRangeZeroBaselineVisible(config.isRangeZeroBaselineVisible());
 
             XYPlot.setOutlineVisible(config.isOutlineVisible());
+            XYPlot.setOutlinePaint(config.getOutlineColor()); //null
 
             NumberAxis domainAxis = (NumberAxis) XYPlot.getDomainAxis();
             Double domainLowerBound = config.getDomainLowerBound();
@@ -407,20 +409,21 @@ public class JFreeChartFactory {
             rangeAxis.setAutoRangeIncludesZero(config.isRangeAutoRangeIncludesZero());
             
         } else if (chart.getPlot() instanceof PiePlot  || chart.getPlot() instanceof MultiplePiePlot) {
-            PiePlot plot;
+            PiePlot piePlot;
             if (chart.getPlot() instanceof MultiplePiePlot) {
-                plot = (PiePlot) ((MultiplePiePlot) chart.getPlot()).getPieChart().getPlot();
+                piePlot = (PiePlot) ((MultiplePiePlot) chart.getPlot()).getPieChart().getPlot();
             } else {
-                plot = (PiePlot) chart.getPlot();
+                piePlot = (PiePlot) chart.getPlot();
             }
             
             if (config.getForegroundAlpha() != null) {
-                plot.setForegroundAlpha(config.getForegroundAlpha());
+                piePlot.setForegroundAlpha(config.getForegroundAlpha());
             }
             
-            plot.setSectionOutlinesVisible(config.isPieSectionOutlinesVisible());
-            plot.setOutlineVisible(config.isOutlineVisible());
-            plot.setShadowPaint(config.getPieShadowColor()); //null
+            piePlot.setSectionOutlinesVisible(config.isPieSectionOutlinesVisible());
+            piePlot.setOutlineVisible(config.isOutlineVisible());
+            piePlot.setOutlinePaint(config.getOutlineColor()); //null
+            piePlot.setShadowPaint(config.getPieShadowColor()); //null
         }
     }
 
