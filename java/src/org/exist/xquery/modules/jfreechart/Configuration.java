@@ -84,7 +84,7 @@ public class Configuration {
     private Color timeAxisColor;
     private Color valueAxisColor;
     
-    private final Color outlineColor = Color.gray; // Not used
+    private Color outlineColor = Color.gray;
     private Color pieShadowColor = new Color(151, 151, 151, 128);
 
     private String seriesColors;
@@ -271,6 +271,10 @@ public class Configuration {
 
     public Color getPlotBackgroundColor() {
         return plotBackgroundColor;
+    }
+
+    public Color getOutlineColor() {
+        return outlineColor;
     }
 
     public Color getPieShadowColor() {
@@ -528,6 +532,10 @@ public class Configuration {
 
                         case "plotBackgroundColor":
                             plotBackgroundColor = Colour.getColor(value);
+                            break;
+
+                        case "outlineColor":
+                            outlineColor = Colour.getColor(value);
                             break;
 
                         case "pieShadowColor":
