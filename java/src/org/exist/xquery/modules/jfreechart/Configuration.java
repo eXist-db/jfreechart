@@ -1,6 +1,6 @@
 /*
  *  eXist Open Source Native XML Database
- *  Copyright (C) 2009-2014 The eXist-db Project
+ *  Copyright (C) 2009-2015 The eXist-db Project
  *  http://exist-db.org
  *
  *  This program is free software; you can redistribute it and/or
@@ -17,7 +17,6 @@
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- *  $Id$
  */
 package org.exist.xquery.modules.jfreechart;
 
@@ -48,6 +47,9 @@ public class Configuration {
     // for XYDotRenderer
     private int dotHeight = 1;
     private int dotWidth = 1;
+
+    // for XYBarRenderer
+    private Double barWidth = 0.9;
 
     // Chart title
     private String title;
@@ -122,10 +124,18 @@ public class Configuration {
     private boolean domainIntegerTickUnits = false;
     private boolean rangeGridlinesVisible = false;
     private boolean domainGridlinesVisible = false;
+    private boolean rangeGridbandsVisible = false;
+    private boolean domainGridbandsVisible = false;
 
     private boolean outlineVisible = true;
     private boolean pieSectionOutlinesVisible = true;
-    
+
+    // for XYBarRenderer
+    private boolean useYInterval = false;
+    private boolean useDomainSymbolAxis = false;
+    private boolean useDomainNumberAxis = false;
+    private boolean useRangeSymbolAxis = false;
+    private Float lineWidth;
 
     // =========================
     // Getters
@@ -197,12 +207,36 @@ public class Configuration {
         return domainGridlinesVisible;
     }
 
+    public boolean isRangeGridbandsVisible() {
+        return rangeGridbandsVisible;
+    }
+
+    public boolean isDomainGridbandsVisible() {
+        return domainGridbandsVisible;
+    }
+
     public boolean isOutlineVisible() {
         return outlineVisible;
     }
 
     public boolean isPieSectionOutlinesVisible() {
         return pieSectionOutlinesVisible;
+    }
+
+    public boolean isUseYInterval() {
+        return useYInterval;
+    }
+
+    public boolean isUseDomainSymbolAxis() {
+	return useDomainSymbolAxis;
+    }
+
+    public boolean isUseDomainNumberAxis() {
+	return useDomainNumberAxis;
+    }
+
+    public boolean isUseRangeSymbolAxis() {
+	return useRangeSymbolAxis;
     }
 
     public PlotOrientation getOrientation() {
@@ -239,6 +273,10 @@ public class Configuration {
 
     public int getDotWidth() {
         return dotWidth;
+    }
+
+    public Double getBarWidth() {
+        return barWidth;
     }
 
     public String getDomainAxisLabel() {
@@ -315,6 +353,10 @@ public class Configuration {
 
     public Float getForegroundAlpha() {
         return foregroundAlpha;
+    }
+
+    public Float getLineWidth() {
+        return lineWidth;
     }
 
     public String getCategoryItemLabelGeneratorClass() {
@@ -482,6 +524,16 @@ public class Configuration {
                             verifyValue(localName, domainGridlinesVisible);
                             break;
 
+                        case "rangeGridbandsVisible":
+                            rangeGridbandsVisible = parseBoolean(value);
+                            verifyValue(localName, rangeGridbandsVisible);
+                            break;
+
+                        case "domainGridbandsVisible":
+                            domainGridbandsVisible = parseBoolean(value);
+                            verifyValue(localName, domainGridbandsVisible);
+                            break;
+
                         case "rangeZeroBaselineVisible":
                             rangeZeroBaselineVisible = parseBoolean(value);
                             verifyValue(localName, rangeZeroBaselineVisible);
@@ -502,6 +554,26 @@ public class Configuration {
                             verifyValue(localName, pieSectionOutlinesVisible);
                             break;
 
+                        case "useYInterval":
+                            useYInterval = parseBoolean(value);
+                            verifyValue(localName, useYInterval);
+                            break;
+
+			case "useDomainSymbolAxis":
+                            useDomainSymbolAxis = parseBoolean(value);
+                            verifyValue(localName, useDomainSymbolAxis);
+                            break;
+
+		        case "useDomainNumberAxis":
+                            useDomainNumberAxis = parseBoolean(value);
+                            verifyValue(localName, useDomainNumberAxis);
+                            break;
+
+			case "useRangeSymbolAxis":
+                            useRangeSymbolAxis = parseBoolean(value);
+                            verifyValue(localName, useRangeSymbolAxis);
+                            break;
+
                         case "width":
                             imageWidth = parseInteger(value);
                             verifyValue(localName, imageWidth);
@@ -520,6 +592,11 @@ public class Configuration {
                         case "dotHeight":
                             dotHeight = parseInteger(value);
                             verifyValue(localName, dotHeight);
+                            break;
+
+		        case "barWidth":
+                            barWidth = parseDouble(value);
+                            verifyValue(localName, barWidth);
                             break;
 
                         case "titleColor":
@@ -599,7 +676,12 @@ public class Configuration {
                             verifyValue(localName, foregroundAlpha);
                             break;
 
-                        case "categoryItemLabelGeneratorClass":
+                        case "lineWidth":
+                            lineWidth = parseFloat(value);
+                            verifyValue(localName, lineWidth);
+                            break;
+
+		        case "categoryItemLabelGeneratorClass":
                             categoryItemLabelGeneratorClass = value;
                             break;
 

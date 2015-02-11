@@ -1,6 +1,6 @@
 /*
  *  eXist Open Source Native XML Database
- *  Copyright (C) 2009 The eXist Project
+ *  Copyright (C) 2009-2015 The eXist-db Project
  *  http://exist-db.org
  *
  *  This program is free software; you can redistribute it and/or
@@ -17,7 +17,6 @@
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- *  $Id$
  */
 package org.exist.xquery.modules.jfreechart;
 
@@ -59,6 +58,7 @@ import org.jfree.chart.JFreeChart;
  *
  * @author Dannes Wessels (dizzzz@exist-db.org)
  * @author Andrzej Taramina (andrzej@chaeron.com)
+ * @author Leif-Jöran Olsson (ljo@exist-db.org)
  */
 public class JFreeCharting extends BasicFunction {
 	
@@ -72,20 +72,31 @@ public class JFreeCharting extends BasicFunction {
      private static final String function2Txt = function1Txt +
              " Output is directly streamed into the servlet output stream.";
 
+    // Note these enumerations are also in JFreeChartFactory ... /ljo
     private static final String chartText="The type of chart to render.  Supported chart types: " +
-            "AreaChart, BarChart, BarChart3D, LineChart, LineChart3D, " +
-            "MultiplePieChart, MultiplePieChart3D, PieChart, PieChart3D, RingChart, " +
-            "SpiderWebChart, StackedAreaChart, StackedBarChart, StackedBarChart3D, " +
-            "WaterfallChart.";
-
+	"AreaChart BarChart BarChart3D " +
+	"LineChart LineChart3D " +
+	"MultiplePieChart MultiplePieChart3D PieChart PieChart3D " +
+	"RingChart SpiderWebChart StackedAreaChart StackedBarChart " +
+	"StackedBarChart3D WaterfallChart. " +
+	"XYDataset: ScatterPlot XYAreaChart XYBarChart XYLineChart. " +
+	"XYZDataset: BubbleChart. ";
+    // see wiki? /ljo
     private static final String parametersText="The configuration for the chart.  The " +
             "configuration should be supplied as follows: <configuration>"+
             "<param1>Value1</param1><param2>Value2</param2>/<configuration>.  " +
             "Supported parameters: width height title categoryAxisLabel timeAxisLabel " +
             "valueAxisLabel domainAxisLabel rangeAxisLabel pieSectionLabel pieSectionNumberFormat pieSectionPercentFormat orientation " +
             "titleColor chartBackgroundColor plotBackgroundColor rangeLowerBound rangeUpperBound categoryItemLabelGeneratorClass seriesColors sectionColors sectionColorsDelimiter " +
-			"categoryAxisColor valueAxisColortimeAxisColor " +
-            "order legend tooltips urls.";
+	    "categoryAxisColor valueAxisColor timeAxisColor " +
+	    "order legend tooltips urls " +
+	    "domainLowerMargin domainUpperMargin foregroundAlpha dotHeight dotWidth " +
+	    "useDomainSymbolAxis useDomainNumberAxis domainGridbandsVisible useRangeSymbolAxis rangeGridbandsVisible lineWidth " +
+	    "outlineVisible pieSectionOutlineVisible domainGridlinesVisible rangeGridlinesVisible lineWidth " +
+	    "onlyShape rangeAutoRangeIncludesZero domainAutoRangeIncludesZero " +
+	    "rangeZeroBaselineVisible domainZeroBaselineVisible rangeIntegerTickUnits domainIntegerTickUnits ";
+
+    // barWidth useYInterval (no effect with current datasets) /ljo
 
     public final static FunctionSignature signatures[] = {
 
