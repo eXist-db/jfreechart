@@ -1,6 +1,6 @@
 /*
  *  eXist Open Source Native XML Database
- *  Copyright (C) 2009-2014 The eXist-db Project
+ *  Copyright (C) 2009-2015 The eXist-db Project
  *  http://exist-db.org
  *
  *  This program is free software; you can redistribute it and/or
@@ -17,10 +17,10 @@
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- *  $Id$
  */
 package org.exist.xquery.modules.jfreechart;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +35,7 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.SymbolAxis;
 import org.jfree.chart.labels.CategoryItemLabelGenerator;
 import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
@@ -46,6 +47,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYDotRenderer;
+import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.category.CategoryDataset;
@@ -53,6 +55,7 @@ import org.jfree.data.general.PieDataset;
 import org.jfree.data.xml.DatasetReader;
 import org.jfree.data.xml.XYDatasetReader;
 import org.jfree.data.xy.IntervalXYDataset;
+import org.jfree.data.xy.XYBarDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYZDataset;
 import org.jfree.ui.RectangleEdge;
@@ -267,16 +270,17 @@ public class JFreeChartFactory {
 
                 setPlotAndNumberAxisParameters(chart, conf);
                 break;
-            case "XYAreaChart":
+	    case "XYAreaChart":
                 chart = ChartFactory.createXYAreaChart(
                         conf.getTitle(), conf.getDomainAxisLabel(), conf.getRangeAxisLabel(), XYDataset,
                         conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
 
                 setPlotAndNumberAxisParameters(chart, conf);
                 break;
-            case "XYBarChart":
+	    case "XYBarChart":
                 chart = ChartFactory.createXYBarChart(
 			conf.getTitle(), conf.getDomainAxisLabel(), true,
+			//conf.getRangeAxisLabel(), new XYBarDataset(XYDataset, conf.getBarWidth()),
 			conf.getRangeAxisLabel(), (IntervalXYDataset) XYDataset,
                         conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
 
@@ -358,55 +362,86 @@ public class JFreeChartFactory {
             XYPlot.setOutlineVisible(config.isOutlineVisible());
             XYPlot.setOutlinePaint(config.getOutlineColor()); //null
 
-            NumberAxis domainAxis = (NumberAxis) XYPlot.getDomainAxis();
-            Double domainLowerBound = config.getDomainLowerBound();
-            Double domainUpperBound = config.getDomainUpperBound();
-            Double domainLowerMargin = config.getDomainLowerMargin();
-            Double domainUpperMargin = config.getDomainUpperMargin();
+	    if (config.isUseDomainSymbolAxis()) {
+		int seriesCount = XYPlot.getDataset().getSeriesCount();
+		String[] seriesKeys = new String[seriesCount];
+		for (int i = 0; i < seriesCount; i++) {
+		    seriesKeys[i] = (String) XYPlot.getDataset().getSeriesKey(i);
+		}
+		SymbolAxis xAxis = new SymbolAxis(config.getDomainAxisLabel(), seriesKeys);
+		xAxis.setGridBandsVisible(config.isDomainGridbandsVisible());
+		XYPlot.setDomainAxis(xAxis);
+	    }
 
-            if (domainUpperBound != null) {
-                domainAxis.setUpperBound(domainUpperBound);
-            }
-            if (domainLowerBound != null) {
-                domainAxis.setLowerBound(domainLowerBound);
-            }
+	    if (config.isUseRangeSymbolAxis()) {
+		int seriesCount = XYPlot.getDataset().getSeriesCount();
+		String[] seriesKeys = new String[seriesCount];
+		for (int i = 0; i < seriesCount; i++) {
+		    seriesKeys[i] = (String) XYPlot.getDataset().getSeriesKey(i);
+		}
+		SymbolAxis yAxis = new SymbolAxis(config.getRangeAxisLabel(), seriesKeys);
+		yAxis.setGridBandsVisible(config.isRangeGridbandsVisible());
+		XYPlot.setRangeAxis(yAxis);
+	    }
 
-            if (domainLowerMargin != null) {
-                domainAxis.setLowerMargin(domainLowerMargin);
-            }
-            if (domainUpperMargin != null) {
-                domainAxis.setUpperMargin(domainUpperMargin);
-            }
+	    if (config.isUseDomainNumberAxis()) {
+		NumberAxis xAxis = new NumberAxis(config.getDomainAxisLabel());
+		XYPlot.setDomainAxis(xAxis);
+	    }
 
-            if (config.isDomainIntegerTickUnits()) {
-                domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-            }
-            domainAxis.setAutoRangeIncludesZero(config.isDomainAutoRangeIncludesZero());
+	    if (XYPlot.getDomainAxis() instanceof NumberAxis) {
+		NumberAxis domainAxis = (NumberAxis) XYPlot.getDomainAxis();
+		Double domainLowerBound = config.getDomainLowerBound();
+		Double domainUpperBound = config.getDomainUpperBound();
+		Double domainLowerMargin = config.getDomainLowerMargin();
+		Double domainUpperMargin = config.getDomainUpperMargin();
 
-            NumberAxis rangeAxis = (NumberAxis) XYPlot.getRangeAxis();
-            Double rangeLowerBound = config.getRangeLowerBound();
-            Double rangeUpperBound = config.getRangeUpperBound();
-            Double rangeLowerMargin = config.getRangeLowerMargin();
-            Double rangeUpperMargin = config.getRangeUpperMargin();
+		if (domainUpperBound != null) {
+		    domainAxis.setUpperBound(domainUpperBound);
+		}
+		if (domainLowerBound != null) {
+		    domainAxis.setLowerBound(domainLowerBound);
+		}
 
-            if (rangeUpperBound != null) {
-                XYPlot.getRangeAxis().setUpperBound(rangeUpperBound);
-            }
-            if (rangeLowerBound != null) {
-                XYPlot.getRangeAxis().setLowerBound(rangeLowerBound);
-            }
+		if (domainLowerMargin != null) {
+		    domainAxis.setLowerMargin(domainLowerMargin);
+		}
+		if (domainUpperMargin != null) {
+		    domainAxis.setUpperMargin(domainUpperMargin);
+		}
 
-            if (rangeLowerMargin != null) {
-                rangeAxis.setLowerMargin(rangeLowerMargin);
-            }
-            if (rangeUpperMargin != null) {
-                rangeAxis.setUpperMargin(rangeUpperMargin);
-            }
+		if (config.isDomainIntegerTickUnits()) {
+		    domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+		}
+		domainAxis.setAutoRangeIncludesZero(config.isDomainAutoRangeIncludesZero());
+	    }
 
-            if (config.isRangeIntegerTickUnits()) {
-                rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-            }
-            rangeAxis.setAutoRangeIncludesZero(config.isRangeAutoRangeIncludesZero());
+	    if (XYPlot.getRangeAxis() instanceof NumberAxis) {
+		NumberAxis rangeAxis = (NumberAxis) XYPlot.getRangeAxis();
+		Double rangeLowerBound = config.getRangeLowerBound();
+		Double rangeUpperBound = config.getRangeUpperBound();
+		Double rangeLowerMargin = config.getRangeLowerMargin();
+		Double rangeUpperMargin = config.getRangeUpperMargin();
+
+		if (rangeUpperBound != null) {
+		    XYPlot.getRangeAxis().setUpperBound(rangeUpperBound);
+		}
+		if (rangeLowerBound != null) {
+		    XYPlot.getRangeAxis().setLowerBound(rangeLowerBound);
+		}
+
+		if (rangeLowerMargin != null) {
+		    rangeAxis.setLowerMargin(rangeLowerMargin);
+		}
+		if (rangeUpperMargin != null) {
+		    rangeAxis.setUpperMargin(rangeUpperMargin);
+		}
+
+		if (config.isRangeIntegerTickUnits()) {
+		    rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+		}
+		rangeAxis.setAutoRangeIncludesZero(config.isRangeAutoRangeIncludesZero());
+	    }
             
         } else if (chart.getPlot() instanceof PiePlot  || chart.getPlot() instanceof MultiplePiePlot) {
             PiePlot piePlot;
@@ -434,16 +469,32 @@ public class JFreeChartFactory {
             plot.setDomainGridlinesVisible(true);
             plot.setRangeGridlinesVisible(true);
             plot.setRenderer(renderer);
-        } else if (chart.getPlot() instanceof XYPlot && (config.getDotWidth() != 1 || config.getDotHeight() != 1)) {
+        } else if (chart.getPlot() instanceof XYPlot) {
             XYPlot XYPlot = (XYPlot) chart.getPlot();
-            XYDotRenderer XYDotRenderer = new XYDotRenderer();
-            if (config.getDotWidth() != 1) {
-                XYDotRenderer.setDotWidth(config.getDotWidth());
-            }
-            if (config.getDotHeight() != 1) {
-                XYDotRenderer.setDotHeight(config.getDotHeight());
-            }
-            XYPlot.setRenderer(XYDotRenderer);
+	    if (config.getDotWidth() != 1 || config.getDotHeight() != 1) {
+		XYDotRenderer XYDotRenderer = new XYDotRenderer();
+		if (config.getDotWidth() != 1) {
+		    XYDotRenderer.setDotWidth(config.getDotWidth());
+		}
+		if (config.getDotHeight() != 1) {
+		    XYDotRenderer.setDotHeight(config.getDotHeight());
+		}
+		XYPlot.setRenderer(XYDotRenderer);
+	    } else if (XYPlot.getRenderer() instanceof XYBarRenderer) {
+		if (config.isUseYInterval()) {
+		    XYBarRenderer XYBarRenderer = (XYBarRenderer) XYPlot.getRenderer();
+		    XYBarRenderer.setUseYInterval(true);
+		    XYPlot.setRenderer(XYBarRenderer);
+		}
+
+	    }
+
+	    if (config.getLineWidth() != null) {
+		int seriesCount = XYPlot.getDataset().getSeriesCount();
+		for (int i = 0; i < seriesCount; i++) {
+		    XYPlot.getRenderer().setSeriesStroke(i, new BasicStroke(config.getLineWidth()));
+		}
+	    }
         }
     }
 
