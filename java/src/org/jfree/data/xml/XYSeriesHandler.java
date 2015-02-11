@@ -96,6 +96,16 @@ public class XYSeriesHandler extends DefaultHandler
         this.values.getSeries(series).add(valueX, valueY);
     }
 
+        /**
+     * Adds an XY item with Y empty (null) to the temporary storage for the series.
+     *
+     * @param valueX  the X value.
+     */
+    public void addItem(double valueX) {
+	int series = getSeriesCount() - 1;
+        this.values.getSeries(series).add(valueX, null);
+    }
+
     /**
      * The start of an element.
      *
