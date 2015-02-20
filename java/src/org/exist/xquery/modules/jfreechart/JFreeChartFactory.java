@@ -48,6 +48,7 @@ import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYDotRenderer;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.category.CategoryDataset;
@@ -442,7 +443,7 @@ public class JFreeChartFactory {
 		}
 		rangeAxis.setAutoRangeIncludesZero(config.isRangeAutoRangeIncludesZero());
 	    }
-            
+            setSeriesColors(chart, config);
         } else if (chart.getPlot() instanceof PiePlot  || chart.getPlot() instanceof MultiplePiePlot) {
             PiePlot piePlot;
             if (chart.getPlot() instanceof MultiplePiePlot) {
@@ -564,6 +565,9 @@ public class JFreeChartFactory {
 
         if (chart.getPlot() instanceof SpiderWebPlot) {
             setSeriesColors((SpiderWebPlot) chart.getPlot(), seriesColors);
+        } else if (chart.getPlot() instanceof XYPlot) {
+	    XYItemRenderer renderer = ((XYPlot) chart.getPlot()).getRenderer();
+            setSeriesColors(renderer, seriesColors);
         } else {
             CategoryItemRenderer renderer = ((CategoryPlot) chart.getPlot()).getRenderer();
             setSeriesColors(renderer, seriesColors);
@@ -583,7 +587,9 @@ public class JFreeChartFactory {
 
                     if (renderer instanceof SpiderWebPlot) {
                         ((SpiderWebPlot) renderer).setSeriesPaint(i, color);
-                    } else {
+		    } else if (renderer instanceof XYItemRenderer) {
+                        ((XYItemRenderer) renderer).setSeriesPaint(i, color);
+		    } else {
                         ((CategoryItemRenderer) renderer).setSeriesPaint(i, color);
                     }
                     

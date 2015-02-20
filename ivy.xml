@@ -10,7 +10,9 @@
 
 		<dependency org="org.apache.xmlgraphics" name="batik-svggen" rev="1.7" transitive="false"/>
         <dependency org="org.apache.xmlgraphics" name="batik-dom" rev="1.7" transitive="false"/>
-		<!-- <dependency org="org.apache.xmlgraphics" name="batik-svg-dom" rev="1.7" transitive="false"/> -->
+	<!-- <dependency org="org.apache.xmlgraphics" name="batik-svg-dom" rev="1.7" transitive="false"/> -->
+	<!-- org.apache.batik.util.SVGConstants -->
+	<dependency org="org.apache.xmlgraphics" name="batik-util" rev="1.7" transitive="false"/>
         <dependency org="org.apache.xmlgraphics" name="batik-awt-util" rev="1.7" transitive="false"/>
 
 		<exclude module="servlet-api"/>
