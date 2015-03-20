@@ -22,7 +22,8 @@ package org.exist.xquery.modules.jfreechart;
 
 import java.awt.Color;
 import java.text.MessageFormat;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.exist.xquery.XPathException;
 import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.plot.PlotOrientation;
@@ -38,7 +39,7 @@ import org.w3c.dom.Node;
  */
 public class Configuration {
 
-    private final static Logger logger = Logger.getLogger(Configuration.class);
+    private final static Logger logger = LogManager.getLogger(Configuration.class);
 
     // Default dimension of image
     private int imageHeight = 300;

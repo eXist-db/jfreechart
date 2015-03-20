@@ -1,6 +1,6 @@
 /*
  *  eXist Open Source Native XML Database
- *  Copyright (C) 2014 The eXist-db Project
+ *  Copyright (C) 2014-2015 The eXist-db Project
  *  http://exist-db.org
  *
  *  This program is free software; you can redistribute it and/or
@@ -26,7 +26,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.exist.xquery.XPathException;
 import org.jfree.chart.plot.DefaultDrawingSupplier;
 
@@ -39,7 +40,7 @@ import org.jfree.chart.plot.DefaultDrawingSupplier;
  */
 public class PiePlotDrawingSupplier extends DefaultDrawingSupplier {
 
-    private final static Logger logger = Logger.getLogger(PiePlotDrawingSupplier.class);
+    private final static Logger logger = LogManager.getLogger(PiePlotDrawingSupplier.class);
     private final Paint[] paints;
     private int index;
 
