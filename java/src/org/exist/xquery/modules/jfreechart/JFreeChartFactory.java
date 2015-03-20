@@ -29,7 +29,8 @@ import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.StringTokenizer;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.exist.xquery.XPathException;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -70,7 +71,7 @@ import org.jfree.ui.RectangleEdge;
  */
 public class JFreeChartFactory {
 
-    private final static Logger logger = Logger.getLogger(JFreeChartFactory.class);
+    private final static Logger logger = LogManager.getLogger(JFreeChartFactory.class);
 
     /**
      *  Create JFreeChart graph using the supplied parameters.

@@ -25,7 +25,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.exist.dom.QName;
 import org.exist.http.servlets.ResponseWrapper;
 import org.exist.storage.serializers.Serializer;
@@ -62,7 +63,7 @@ import org.jfree.chart.JFreeChart;
  */
 public class JFreeCharting extends BasicFunction {
 	
-	protected static final Logger logger = Logger.getLogger(JFreeCharting.class);
+	protected static final Logger logger = LogManager.getLogger(JFreeCharting.class);
 
     private static final String function1Txt =
             "Render chart using JFreechart. Check documentation on " +

@@ -1,6 +1,6 @@
 /*
  *  eXist Open Source Native XML Database
- *  Copyright (C) 2011 The eXist Project
+ *  Copyright (C) 2011-2015 The eXist-db Project
  *  http://exist-db.org
  *
  *  This program is free software; you can redistribute it and/or
@@ -17,11 +17,11 @@
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- *  $Id$
  */
 package org.exist.xquery.modules.jfreechart.render;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  *   Renderer factory, defaults to PNG is anything fails.
@@ -30,7 +30,7 @@ import org.apache.log4j.Logger;
  */
 public class RendererFactory {
     
-    private final static Logger LOG = Logger.getLogger(RendererFactory.class);
+    private final static Logger LOG = LogManager.getLogger(RendererFactory.class);
 
     public static Renderer getRenderer(String type) {
         
