@@ -494,7 +494,7 @@ public class JFreeChartFactory {
 	    if (config.getLineWidth() != null) {
 		int seriesCount = XYPlot.getDataset().getSeriesCount();
 		for (int i = 0; i < seriesCount; i++) {
-		    XYPlot.getRenderer().setSeriesStroke(i, new BasicStroke(config.getLineWidth()));
+		    XYPlot.getRenderer().setSeriesStroke(i, new BasicStroke(config.getLineWidth(), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
 		}
 	    }
         }
