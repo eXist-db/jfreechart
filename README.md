@@ -1,42 +1,18 @@
-# Example App for eXist-db
+JFreeChart extension
+==========
 
-This is a simple skeleton Example App for eXist-db which will be built as an EXPath Package using Maven.
+The eXist-db [JFreeChart](http://www.jfree.org/jfreechart/) extension has been part of the eXist-db distribution for a long time, but due to the size of the third party libraries it hasn't been enabled by default. 
 
-You can use this as a base for your own eXist-db Apps or Libraries.
+This project provides two XAR files:
+- a XAR file containing all required java libraries files 
+- a compact Showcase XAR.
 
+The XAR file is shipped with [JFreeChart](http://www.jfree.org/jfreechart/) version *1.0.19* and Apache [Batik SVG Toolkit](https://xmlgraphics.apache.org/batik/) version *1.11*.
 
-The App contains:
- 
-1. An example XQuery Library Module of user defined functions written in Java.
-
-2. A example XQuery Library Module of user defined functions written in XQuery.
-
-3. A simple Web landing page for the app itself.   
+Installable XAR files are available on the [releases](../../releases) page. Contributions are welcome via [Pull requests](../../pulls); bugreports, ideas and suggestions can be filed using the [Issues](../../issues) page.
 
 
-
-1. By default the project is setup for an LGPL 2.1 licensing scheme. You should decide if that is appropriate and if not, make the following modifications:
-
-  1. Modify the `licenses` section in `pom.xml`.
-  
-  2. Override the `configuration` of the license-maven-plugin` in `pom.xml`. See: http://code.mycila.com/license-maven-plugin/
-  
-  3. Potentially remove or replace `LGPL2.1-template.txt`.
-  
-  4. Run `mvn license:check` and `mvn license:format` appropriately. 
-
-1. You should modify the `pom.xml` changing at least the `groupId` and `artifactId` to coordinates that are suitable for your organisation.
-
-2. You should modify, remove, or append to, the files in:
-
-  * `src/main/java` for any XQuery library modules written in Java.
-
-  * `src/main/xquery` for any XQUery library modules written in Java.
-
-  * `src/main/xar-resources` for any static files or XQuery modules that are shipped as part of your app. 
-
-NOTE: You will also need to modify `xar-assembly.xml` to reflect any changes you make to user defined XQuery library modules (whether written in Java or XQuery).
-
+Some documentation can be found on the wiki of the [JFreeChart extension](https://github.com/eXist-db/jfreechart/wiki).
 
 * Requirements: Java 8, Apache Maven 3.3+, Git.
 
@@ -48,16 +24,3 @@ $ mvn package
 
 There will be a `.xar` file in the `target/` sub-folder.
 
-
-You can use the Maven Release plugin to publish your applications **publicly** to Maven Central.
-
-1. You need to register to manage the `groupId` of your organisation on Maven Central, see: http://central.sonatype.org/pages/ossrh-guide.html#create-a-ticket-with-sonatype
-
-2. Assuming your Git repo is in-sync, you can simply run the following to upload to Sonatype OSS:
-
-```bash
-$ mvn release:prepare
-$ mvn release:perform
-```
-
-3. You need to release the artifacts on the Sonatype OSS web portal, see: http://central.sonatype.org/pages/ossrh-guide.html#releasing-to-central
