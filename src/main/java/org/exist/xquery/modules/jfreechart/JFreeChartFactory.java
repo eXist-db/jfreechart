@@ -515,7 +515,7 @@ public class JFreeChartFactory {
 
     private static void setCategoryItemLabelGenerator(final JFreeChart chart, final Configuration config) throws XPathException {
         final String className = config.getCategoryItemLabelGeneratorClass();
-        CategoryItemLabelGenerator generator;
+        final CategoryItemLabelGenerator generator;
 
         if (className != null) {
             try {

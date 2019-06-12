@@ -40,6 +40,8 @@
 
 package org.jfree.data.xml;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYZDataset;
 import org.xml.sax.SAXException;
@@ -56,6 +58,8 @@ import java.io.InputStream;
  * A utility class for reading datasets from XML.
  */
 public class XYDatasetReader {
+
+    static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Reads a {@link XYDataset} from an XML file.
@@ -88,7 +92,7 @@ public class XYDatasetReader {
             parser.parse(in, handler);
             result = handler.getDataset();
         } catch (final SAXException | ParserConfigurationException e) {
-            System.out.println(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
         }
         return result;
 
@@ -126,7 +130,7 @@ public class XYDatasetReader {
             parser.parse(in, handler);
             result = handler.getDataset();
         } catch (final SAXException | ParserConfigurationException e) {
-            System.out.println(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
         }
         return result;
 

@@ -135,13 +135,14 @@ public class JFreeCharting extends StrictResponseFunction {
             config.parse(((NodeValue) args[1].itemAt(0)).getNode());
 
             // Get datastream
+            @SuppressWarnings("resource")
             final Serializer serializer = context.getBroker().getSerializer();
 
             final NodeValue node = (NodeValue) args[2].itemAt(0);
             final InputStream is = new NodeInputStream(context.getDatabase(), serializer, node);
 
             // get chart
-            JFreeChart chart;
+            final JFreeChart chart;
             try {
                 chart = JFreeChartFactory.createJFreeChart(chartType, config, is);
 
