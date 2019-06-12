@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://expath.org/ns/pkg" name="${package-name}" abbrev="${package-abbrev}" version="${project.version}"
+         spec="1.0">
+    <title>${package-title}</title>
+    <author id="DW">Dannes Wessels</author>
+    <author id="LJO">Leif-Jöran Olsson</author>
+    <website>${project.url}</website>
+    <license>GNU Lesser General Public License, version 2.1</license>
+    <copyright>true</copyright>
+    <description>${description}</description>
+
+    <type>application</type>
+
+    <status>beta</status>
+
+    <tag>${project.artifactId}</tag>
+    <tag>application</tag>
+    <category id="apps">Applications</category>
+
+    <dependency processor="http://exist-db.org" semver-min="${exist.version}"/>
+
+    <!-- Collection inside /db/apps where xar-resources will be copied to -->
+    <target>${package-abbrev}</target>
+
+    <prepare>pre-install.xq</prepare>
+    <finish>post-install.xq</finish>
+
+    <!-- includes everything in src/main/xar-resources, README.md, and LICENSE -->
+    <fileSets>
+        <fileSet>
+            <directory>${basedir}</directory>
+            <includes>
+                <include>README.md</include>
+                <include>LICENSE</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/src/main/xar-resources</directory>
+        </fileSet>
+    </fileSets>
+
+    <!-- include the XQuery Library modules written in XQuery from this project -->
+    <xquerySets>
+        <!--
+        <xquerySet>
+            <namespace>https://my-organisation.com/exist-db/ns/app/my-xquery-module</namespace>
+            <directory>${basedir}/src/main/xquery</directory>
+            <includes>
+                <include>example-module.xqm</include>
+            </includes>
+            <outputDirectory>content</outputDirectory>
+        </xquerySet>
+        -->
+    </xquerySets>
+
+    <!-- include the XQuery Library Module written in Java (JAR output) from this project -->
+    <dependencySets>
+        <dependencySet>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>${project.artifactId}</artifactId>
+            <version>${project.version}</version>
+        </dependencySet>
+        <dependencySet>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>${jfreechart.version}</version>
+        </dependencySet>
+        <dependencySet>
+            <groupId>org.jfree</groupId>
+            <artifactId>jcommon</artifactId>
+            <version>${jcommon.version}</version>
+        </dependencySet>
+        <dependencySet>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-svggen</artifactId>
+            <version>${batik.version}</version>
+        </dependencySet>
+        <dependencySet>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-dom</artifactId>
+            <version>${batik.version}</version>
+        </dependencySet>
+        <dependencySet>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-util</artifactId>
+            <version>${batik.version}</version>
+        </dependencySet>
+        <dependencySet>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-awt-util</artifactId>
+            <version>${batik.version}</version>
+        </dependencySet>
+
+
+    </dependencySets>
+
+    <!-- register the Java module to eXist-db -->
+    <components>
+        <resource>
+            <public-uri>http://exist-db.org/xquery/jfreechart</public-uri>
+            <file>urn:java:class:org.exist.xquery.modules.jfreechart.JFreeChartModule</file>
+        </resource>
+    </components>
+
+    <changelog>
+        <change version="0.2">
+            <ul>
+                <li>Adding initial support for two new datasets: XYDataset and XYZDataset.</li>
+                <li>Added XYAreaChart, XYBarChart, ScatterPlot and XYLineChart (XYDataset) and BubbleChart
+                    XYZDataset.</li>
+                <li>Added new configuration options for CategoryAxis and NumberAxis: foregroundAlpha, rangeLowerMargin,
+                    rangeUpperMargin, domainLowerMargin (NumberAxis only), domainUpperMargin (NumberAxis only),
+                    domainLowerBound (NumberAxis only), domainUpperBound (NumberAxis only), rangeAutoRangeIncludesZero,
+                    domainAutoRangeIncludesZero (NumberAxis only), rangeZeroBaselineVisible, domainZeroBaselineVisible
+                    (NumberAxis only), rangeIntegerTickUnits, domainIntegerTickUnits (NumberAxis only),
+                    rangeGridlinesVisible, domainGridlinesVisible, and for ScatterPlot: dotHeight, dotWidth.
+                </li>
+                <li>Added new configuration options for plot: outlineVisible, pieSectionOutlinesVisible,
+                    pieShadowColor. Also now possible to set null for pieShadowColor and plotBackgroundColor
+                </li>
+                <li>Switched to Java7.</li>
+            </ul>
+        </change>
+        <change version="0.5.0">
+            <ul>
+                <li>Mavenized build.</li>
+                <li>Switch to Java8.</li>
+                <li>Compatible with eXist-db v4.6 and newer.</li>
+                <li>Made examples to output compressed SVG.</li>
+            </ul>
+        </change>
+    </changelog>
+
+</package>

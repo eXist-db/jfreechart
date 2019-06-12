@@ -1,10 +1,5 @@
-build/classes
-build
-dist
-java/lib
-config/library/exist.xml
-config/library/expath-pkg.xml
-config/library/repo.xml
-config/application/expath-pkg.xml
-config/application/repo.xml
-local.build.properties
+target/
+
+*.iml
+.idea/
+webapp
