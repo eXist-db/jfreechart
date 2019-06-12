@@ -1,6 +1,8 @@
 JFreeChart extension
 ==========
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/23edb120de61468e8675acc868de5074)](https://app.codacy.com/app/dannes/jfreechart?utm_source=github.com&utm_medium=referral&utm_content=eXist-db/jfreechart&utm_campaign=Badge_Grade_Dashboard)
+
 The eXist-db [JFreeChart](http://www.jfree.org/jfreechart/) extension has been part of the eXist-db distribution for a long time, but due to the size of the third party libraries it hasn't been enabled by default. 
 
 This project provides two XAR files:
