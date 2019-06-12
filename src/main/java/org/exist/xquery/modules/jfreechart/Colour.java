@@ -32,7 +32,7 @@ import java.awt.*;
  */
 public class Colour {
 
-    private static final String[][] colours = {
+    private static final String[][] COLOURS = {
             {"AliceBlue", "F0F8FF"},
             {"AntiqueWhite", "FAEBD7"},
             {"Aqua", "00FFFF"},
@@ -184,7 +184,7 @@ public class Colour {
      */
     public static Color getColor(final String value) throws XPathException {
         Color color = null;
-        for (final String[] colour : colours) {
+        for (final String[] colour : COLOURS) {
             if (value.equalsIgnoreCase(colour[0])) {
                 color = new Color(Integer.parseInt(colour[1], 16));
             }

@@ -51,7 +51,7 @@ import java.io.OutputStream;
  */
 public class JFreeCharting extends StrictResponseFunction {
 
-    protected static final Logger logger = LogManager.getLogger(JFreeCharting.class);
+    protected static final Logger LOGGER = LogManager.getLogger(JFreeCharting.class);
 
     private static final String function1Txt =
             "Render chart using JFreechart. Check documentation on " +
@@ -205,9 +205,8 @@ public class JFreeCharting extends StrictResponseFunction {
             throw new XPathException(this, signatures[1] +
                     " can only be used within the EXistServlet or XQueryServlet");
         }
-        final ResponseWrapper response = (ResponseWrapper) respValue.getObject();
 
-        return response;
+        return (ResponseWrapper) respValue.getObject();
     }
 
     /**

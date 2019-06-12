@@ -59,7 +59,7 @@ import java.io.InputStream;
  */
 public class XYDatasetReader {
 
-    static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Reads a {@link XYDataset} from an XML file.

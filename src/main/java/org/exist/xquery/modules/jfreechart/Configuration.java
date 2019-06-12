@@ -42,7 +42,7 @@ public class Configuration {
 
     // Image type
     public static final String DEFAULT_IMAGE_TYPE = "png";
-    private final static Logger logger = LogManager.getLogger(Configuration.class);
+    private final static Logger LOGGER = LogManager.getLogger(Configuration.class);
     // Default dimension of image
     private int imageHeight = 300;
     private int imageWidth = 400;
@@ -744,7 +744,7 @@ public class Configuration {
             return Integer.valueOf(value);
 
         } catch (final NumberFormatException ex) {
-            logger.debug(ex.getMessage());
+            LOGGER.debug(ex.getMessage());
             return null;
         }
     }
@@ -759,7 +759,7 @@ public class Configuration {
             return Double.valueOf(value);
 
         } catch (final NumberFormatException ex) {
-            logger.debug(ex.getMessage());
+            LOGGER.debug(ex.getMessage());
             return null;
         }
     }
@@ -774,7 +774,7 @@ public class Configuration {
             return Float.valueOf(value);
 
         } catch (final NumberFormatException ex) {
-            logger.debug(ex.getMessage());
+            LOGGER.debug(ex.getMessage());
             return null;
         }
     }
