@@ -710,6 +710,8 @@ public class Configuration {
                             imageType = value;
                             break;
 
+                        default:
+                            throw new XPathException("Unexpected key/value: " + localName + "/" +value);
                     }
 
                 }

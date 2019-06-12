@@ -39,6 +39,7 @@ import org.jfree.chart.renderer.xy.XYDotRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.chart.title.TextTitle;
+import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.general.PieDataset;
 import org.jfree.data.xml.DatasetReader;
@@ -46,7 +47,6 @@ import org.jfree.data.xml.XYDatasetReader;
 import org.jfree.data.xy.IntervalXYDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYZDataset;
-import org.jfree.chart.ui.RectangleEdge;
 
 import java.awt.*;
 import java.io.IOException;
@@ -228,7 +228,7 @@ public class JFreeChartFactory {
 
                 setCategoryChartParameters(chart, conf);
                 break;
-                
+
             case "WaterfallChart":
                 chart = ChartFactory.createWaterfallChart(
                         conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
@@ -283,6 +283,7 @@ public class JFreeChartFactory {
                         + "StackedBarChart3D WaterfallChart. "
                         + "XYDataset: ScatterPlot XYAreaChart XYBarChart XYLineChart. "
                         + "XYZDataset: BubbleChart.");
+                break;
 
         }
 

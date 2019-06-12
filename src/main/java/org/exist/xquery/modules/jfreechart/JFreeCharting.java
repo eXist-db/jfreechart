@@ -183,31 +183,7 @@ public class JFreeCharting extends StrictResponseFunction {
 
         return Sequence.EMPTY_SEQUENCE;
     }
-
-    /**
-     * Get HTTP response wrapper which provides access to the servlet
-     * outputstream.
-     *
-     * @throws XPathException Thrown when something bad happens.
-     */
-    private ResponseWrapper getResponseWrapper(final XQueryContext context) throws XPathException {
-        final ResponseModule myModule = (ResponseModule) context.getModule(ResponseModule.NAMESPACE_URI);
-        // response object is read from global variable $response
-        final Variable respVar = myModule.resolveVariable(ResponseModule.RESPONSE_VAR);
-        if (respVar == null) {
-            throw new XPathException(this, "No response object found in the current XQuery context.");
-        }
-        if (respVar.getValue().getItemType() != Type.JAVA_OBJECT) {
-            throw new XPathException(this, "Variable $response is not bound to an Java object.");
-        }
-        final JavaObjectValue respValue = (JavaObjectValue) respVar.getValue().itemAt(0);
-        if (!"org.exist.http.servlets.HttpResponseWrapper".equals(respValue.getObject().getClass().getName())) {
-            throw new XPathException(this, signatures[1] +
-                    " can only be used within the EXistServlet or XQueryServlet");
-        }
-
-        return (ResponseWrapper) respValue.getObject();
-    }
+    
 
     /**
      * Writes chart to response wrapper as PNG image.
