@@ -111,10 +111,10 @@ public class XYZValueHandler extends DefaultHandler implements XYZDatasetTags {
     public void endElement(final String namespaceURI,
                            final String localName,
                            final String qName) throws SAXException {
-        Number value;
+        Double value;
         try {
             value = Double.valueOf(getCurrentText());
-            if (((Double) value).isNaN()) {
+            if (value.isNaN()) {
                 value = null;
             }
         } catch (final NumberFormatException e1) {

@@ -66,11 +66,6 @@
             <version>${jfreechart.version}</version>
         </dependencySet>
         <dependencySet>
-            <groupId>org.jfree</groupId>
-            <artifactId>jcommon</artifactId>
-            <version>${jcommon.version}</version>
-        </dependencySet>
-        <dependencySet>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-svggen</artifactId>
             <version>${batik.version}</version>

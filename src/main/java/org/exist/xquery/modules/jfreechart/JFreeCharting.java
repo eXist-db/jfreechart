@@ -20,7 +20,6 @@
  */
 package org.exist.xquery.modules.jfreechart;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.exist.dom.QName;
@@ -28,7 +27,6 @@ import org.exist.http.servlets.ResponseWrapper;
 import org.exist.storage.serializers.Serializer;
 import org.exist.validation.internal.node.NodeInputStream;
 import org.exist.xquery.*;
-import org.exist.xquery.functions.response.ResponseModule;
 import org.exist.xquery.functions.response.StrictResponseFunction;
 import org.exist.xquery.modules.jfreechart.render.Renderer;
 import org.exist.xquery.modules.jfreechart.render.RendererFactory;
@@ -51,7 +49,7 @@ import java.io.OutputStream;
  */
 public class JFreeCharting extends StrictResponseFunction {
 
-    protected static final Logger logger = LogManager.getLogger(JFreeCharting.class);
+    protected static final Logger LOGGER = LogManager.getLogger(JFreeCharting.class);
 
     private static final String function1Txt =
             "Render chart using JFreechart. Check documentation on " +
@@ -135,13 +133,14 @@ public class JFreeCharting extends StrictResponseFunction {
             config.parse(((NodeValue) args[1].itemAt(0)).getNode());
 
             // Get datastream
+            @SuppressWarnings("resource")
             final Serializer serializer = context.getBroker().getSerializer();
 
             final NodeValue node = (NodeValue) args[2].itemAt(0);
             final InputStream is = new NodeInputStream(context.getDatabase(), serializer, node);
 
             // get chart
-            JFreeChart chart;
+            final JFreeChart chart;
             try {
                 chart = JFreeChartFactory.createJFreeChart(chartType, config, is);
 
@@ -183,31 +182,6 @@ public class JFreeCharting extends StrictResponseFunction {
         return Sequence.EMPTY_SEQUENCE;
     }
 
-    /**
-     * Get HTTP response wrapper which provides access to the servlet
-     * outputstream.
-     *
-     * @throws XPathException Thrown when something bad happens.
-     */
-    private ResponseWrapper getResponseWrapper(final XQueryContext context) throws XPathException {
-        final ResponseModule myModule = (ResponseModule) context.getModule(ResponseModule.NAMESPACE_URI);
-        // response object is read from global variable $response
-        final Variable respVar = myModule.resolveVariable(ResponseModule.RESPONSE_VAR);
-        if (respVar == null) {
-            throw new XPathException(this, "No response object found in the current XQuery context.");
-        }
-        if (respVar.getValue().getItemType() != Type.JAVA_OBJECT) {
-            throw new XPathException(this, "Variable $response is not bound to an Java object.");
-        }
-        final JavaObjectValue respValue = (JavaObjectValue) respVar.getValue().itemAt(0);
-        if (!"org.exist.http.servlets.HttpResponseWrapper".equals(respValue.getObject().getClass().getName())) {
-            throw new XPathException(this, signatures[1] +
-                    " can only be used within the EXistServlet or XQueryServlet");
-        }
-        final ResponseWrapper response = (ResponseWrapper) respValue.getObject();
-
-        return response;
-    }
 
     /**
      * Writes chart to response wrapper as PNG image.
@@ -216,25 +190,21 @@ public class JFreeCharting extends StrictResponseFunction {
      */
     private void writeToResponseWrapper(final Configuration config, final ResponseWrapper response, final JFreeChart chart, final Renderer renderer)
             throws XPathException {
-        OutputStream os = null;
-        try {
-            response.setContentType(renderer.getContentType());
 
-            final String contentEncoding = renderer.getContentEncoding();
-            if (contentEncoding != null) {
-                response.setHeader("Content-Encoding", contentEncoding);
-            }
+        response.setContentType(renderer.getContentType());
 
-            os = response.getOutputStream();
+        final String contentEncoding = renderer.getContentEncoding();
+        if (contentEncoding != null) {
+            response.setHeader("Content-Encoding", contentEncoding);
+        }
+
+        try (OutputStream os = response.getOutputStream()) {
             renderer.render(chart, config, os);
-
 
         } catch (final IOException ex) {
             LOG.error(ex);
             throw new XPathException(this, "IO issue while serializing image. " + ex.getMessage());
 
-        } finally {
-            IOUtils.closeQuietly(os);
         }
 
     }

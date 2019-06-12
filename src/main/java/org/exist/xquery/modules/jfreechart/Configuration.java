@@ -25,7 +25,7 @@ import org.apache.logging.log4j.Logger;
 import org.exist.xquery.XPathException;
 import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.util.TableOrder;
+import org.jfree.chart.util.TableOrder;
 import org.w3c.dom.Node;
 
 import java.awt.*;
@@ -42,7 +42,7 @@ public class Configuration {
 
     // Image type
     public static final String DEFAULT_IMAGE_TYPE = "png";
-    private final static Logger logger = LogManager.getLogger(Configuration.class);
+    private final static Logger LOGGER = LogManager.getLogger(Configuration.class);
     // Default dimension of image
     private int imageHeight = 300;
     private int imageWidth = 400;
@@ -710,6 +710,8 @@ public class Configuration {
                             imageType = value;
                             break;
 
+                        default:
+                            throw new XPathException("Unexpected key/value: " + localName + "/" +value);
                     }
 
                 }
@@ -744,7 +746,7 @@ public class Configuration {
             return Integer.valueOf(value);
 
         } catch (final NumberFormatException ex) {
-            logger.debug(ex.getMessage());
+            LOGGER.debug(ex.getMessage());
             return null;
         }
     }
@@ -759,7 +761,7 @@ public class Configuration {
             return Double.valueOf(value);
 
         } catch (final NumberFormatException ex) {
-            logger.debug(ex.getMessage());
+            LOGGER.debug(ex.getMessage());
             return null;
         }
     }
@@ -774,7 +776,7 @@ public class Configuration {
             return Float.valueOf(value);
 
         } catch (final NumberFormatException ex) {
-            logger.debug(ex.getMessage());
+            LOGGER.debug(ex.getMessage());
             return null;
         }
     }

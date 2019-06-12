@@ -39,6 +39,7 @@ import org.jfree.chart.renderer.xy.XYDotRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.chart.title.TextTitle;
+import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.general.PieDataset;
 import org.jfree.data.xml.DatasetReader;
@@ -46,7 +47,6 @@ import org.jfree.data.xml.XYDatasetReader;
 import org.jfree.data.xy.IntervalXYDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYZDataset;
-import org.jfree.ui.RectangleEdge;
 
 import java.awt.*;
 import java.io.IOException;
@@ -66,7 +66,7 @@ import java.util.StringTokenizer;
  */
 public class JFreeChartFactory {
 
-    private final static Logger logger = LogManager.getLogger(JFreeChartFactory.class);
+    private final static Logger LOGGER = LogManager.getLogger(JFreeChartFactory.class);
 
     /**
      * Create JFreeChart graph using the supplied parameters.
@@ -80,35 +80,35 @@ public class JFreeChartFactory {
     public static JFreeChart createJFreeChart(final String chartType, final Configuration conf, final InputStream is)
             throws XPathException {
 
-        logger.debug("Generating " + chartType);
+        LOGGER.debug("Generating " + chartType);
 
         // Currently four dataset types supported
         CategoryDataset categoryDataset = null;
         PieDataset pieDataset = null;
-        XYDataset XYDataset = null;
-        XYZDataset XYZDataset = null;
+        XYDataset xyDataset = null;
+        XYZDataset xyzDataset = null;
 
         try {
             if (null != chartType) switch (chartType) {
                 case "PieChart":
                 case "PieChart3D":
                 case "RingChart":
-                    logger.debug("Reading XML PieDataset");
+                    LOGGER.debug("Reading XML PieDataset");
                     pieDataset = DatasetReader.readPieDatasetFromXML(is);
                     break;
                 case "ScatterPlot":
                 case "XYAreaChart":
                 case "XYBarChart":
                 case "XYLineChart":
-                    logger.debug("Reading XML XYDataset");
-                    XYDataset = XYDatasetReader.readXYDatasetFromXML(is);
+                    LOGGER.debug("Reading XML XYDataset");
+                    xyDataset = XYDatasetReader.readXYDatasetFromXML(is);
                     break;
                 case "BubbleChart":
-                    logger.debug("Reading XML XYZDataset");
-                    XYZDataset = XYDatasetReader.readXYZDatasetFromXML(is);
+                    LOGGER.debug("Reading XML XYZDataset");
+                    xyzDataset = XYDatasetReader.readXYZDatasetFromXML(is);
                     break;
                 default:
-                    logger.debug("Reading XML CategoryDataset");
+                    LOGGER.debug("Reading XML CategoryDataset");
                     categoryDataset = DatasetReader.readCategoryDatasetFromXML(is);
                     break;
             }
@@ -145,24 +145,8 @@ public class JFreeChartFactory {
                 setCategoryChartParameters(chart, conf);
                 break;
 
-            case "BarChart3D":
-                chart = ChartFactory.createBarChart3D(
-                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
-                        conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
-
-                setCategoryChartParameters(chart, conf);
-                break;
-
             case "LineChart":
                 chart = ChartFactory.createLineChart(
-                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
-                        conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
-
-                setCategoryChartParameters(chart, conf);
-                break;
-
-            case "LineChart3D":
-                chart = ChartFactory.createLineChart3D(
                         conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
                         conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
 
@@ -245,14 +229,6 @@ public class JFreeChartFactory {
                 setCategoryChartParameters(chart, conf);
                 break;
 
-            case "StackedBarChart3D":
-                chart = ChartFactory.createStackedBarChart3D(
-                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
-                        conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
-
-                setCategoryChartParameters(chart, conf);
-                break;
-
             case "WaterfallChart":
                 chart = ChartFactory.createWaterfallChart(
                         conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
@@ -262,14 +238,14 @@ public class JFreeChartFactory {
                 break;
             case "ScatterPlot":
                 chart = ChartFactory.createScatterPlot(
-                        conf.getTitle(), conf.getDomainAxisLabel(), conf.getRangeAxisLabel(), XYDataset,
+                        conf.getTitle(), conf.getDomainAxisLabel(), conf.getRangeAxisLabel(), xyDataset,
                         conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
 
                 setPlotAndNumberAxisParameters(chart, conf);
                 break;
             case "XYAreaChart":
                 chart = ChartFactory.createXYAreaChart(
-                        conf.getTitle(), conf.getDomainAxisLabel(), conf.getRangeAxisLabel(), XYDataset,
+                        conf.getTitle(), conf.getDomainAxisLabel(), conf.getRangeAxisLabel(), xyDataset,
                         conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
 
                 setPlotAndNumberAxisParameters(chart, conf);
@@ -278,28 +254,28 @@ public class JFreeChartFactory {
                 chart = ChartFactory.createXYBarChart(
                         conf.getTitle(), conf.getDomainAxisLabel(), true,
                         //conf.getRangeAxisLabel(), new XYBarDataset(XYDataset, conf.getBarWidth()),
-                        conf.getRangeAxisLabel(), (IntervalXYDataset) XYDataset,
+                        conf.getRangeAxisLabel(), (IntervalXYDataset) xyDataset,
                         conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
 
                 setPlotAndNumberAxisParameters(chart, conf);
                 break;
             case "XYLineChart":
                 chart = ChartFactory.createXYLineChart(
-                        conf.getTitle(), conf.getDomainAxisLabel(), conf.getRangeAxisLabel(), XYDataset,
+                        conf.getTitle(), conf.getDomainAxisLabel(), conf.getRangeAxisLabel(), xyDataset,
                         conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
 
                 setPlotAndNumberAxisParameters(chart, conf);
                 break;
             case "BubbleChart":
                 chart = ChartFactory.createBubbleChart(
-                        conf.getTitle(), conf.getDomainAxisLabel(), conf.getRangeAxisLabel(), XYZDataset,
+                        conf.getTitle(), conf.getDomainAxisLabel(), conf.getRangeAxisLabel(), xyzDataset,
                         conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
                 setPlotAndNumberAxisParameters(chart, conf);
                 break;
 
 
             default:
-                logger.error("Illegal chart type. Choose one of "
+                LOGGER.error("Illegal chart type. Choose one of "
                         + "CategoryDataset/PieDataset: AreaChart BarChart BarChart3D "
                         + "LineChart LineChart3D "
                         + "MultiplePieChart MultiplePieChart3D PieChart PieChart3D "
@@ -307,6 +283,7 @@ public class JFreeChartFactory {
                         + "StackedBarChart3D WaterfallChart. "
                         + "XYDataset: ScatterPlot XYAreaChart XYBarChart XYLineChart. "
                         + "XYZDataset: BubbleChart.");
+                break;
 
         }
 
@@ -346,48 +323,48 @@ public class JFreeChartFactory {
             }
 
         } else if (chart.getPlot() instanceof XYPlot) {
-            final XYPlot XYPlot = (XYPlot) chart.getPlot();
+            final XYPlot xyPlot = (XYPlot) chart.getPlot();
             if (config.getForegroundAlpha() != null) {
-                XYPlot.setForegroundAlpha(config.getForegroundAlpha());
+                xyPlot.setForegroundAlpha(config.getForegroundAlpha());
             }
 
-            XYPlot.setDomainGridlinesVisible(config.isDomainGridlinesVisible());
-            XYPlot.setRangeGridlinesVisible(config.isRangeGridlinesVisible());
-            XYPlot.setDomainZeroBaselineVisible(config.isDomainZeroBaselineVisible());
-            XYPlot.setRangeZeroBaselineVisible(config.isRangeZeroBaselineVisible());
+            xyPlot.setDomainGridlinesVisible(config.isDomainGridlinesVisible());
+            xyPlot.setRangeGridlinesVisible(config.isRangeGridlinesVisible());
+            xyPlot.setDomainZeroBaselineVisible(config.isDomainZeroBaselineVisible());
+            xyPlot.setRangeZeroBaselineVisible(config.isRangeZeroBaselineVisible());
 
-            XYPlot.setOutlineVisible(config.isOutlineVisible());
-            XYPlot.setOutlinePaint(config.getOutlineColor()); //null
+            xyPlot.setOutlineVisible(config.isOutlineVisible());
+            xyPlot.setOutlinePaint(config.getOutlineColor()); //null
 
             if (config.isUseDomainSymbolAxis()) {
-                final int seriesCount = XYPlot.getDataset().getSeriesCount();
+                final int seriesCount = xyPlot.getDataset().getSeriesCount();
                 final String[] seriesKeys = new String[seriesCount];
                 for (int i = 0; i < seriesCount; i++) {
-                    seriesKeys[i] = (String) XYPlot.getDataset().getSeriesKey(i);
+                    seriesKeys[i] = (String) xyPlot.getDataset().getSeriesKey(i);
                 }
                 final SymbolAxis xAxis = new SymbolAxis(config.getDomainAxisLabel(), seriesKeys);
                 xAxis.setGridBandsVisible(config.isDomainGridbandsVisible());
-                XYPlot.setDomainAxis(xAxis);
+                xyPlot.setDomainAxis(xAxis);
             }
 
             if (config.isUseRangeSymbolAxis()) {
-                final int seriesCount = XYPlot.getDataset().getSeriesCount();
+                final int seriesCount = xyPlot.getDataset().getSeriesCount();
                 final String[] seriesKeys = new String[seriesCount];
                 for (int i = 0; i < seriesCount; i++) {
-                    seriesKeys[i] = (String) XYPlot.getDataset().getSeriesKey(i);
+                    seriesKeys[i] = (String) xyPlot.getDataset().getSeriesKey(i);
                 }
                 final SymbolAxis yAxis = new SymbolAxis(config.getRangeAxisLabel(), seriesKeys);
                 yAxis.setGridBandsVisible(config.isRangeGridbandsVisible());
-                XYPlot.setRangeAxis(yAxis);
+                xyPlot.setRangeAxis(yAxis);
             }
 
             if (config.isUseDomainNumberAxis()) {
                 final NumberAxis xAxis = new NumberAxis(config.getDomainAxisLabel());
-                XYPlot.setDomainAxis(xAxis);
+                xyPlot.setDomainAxis(xAxis);
             }
 
-            if (XYPlot.getDomainAxis() instanceof NumberAxis) {
-                final NumberAxis domainAxis = (NumberAxis) XYPlot.getDomainAxis();
+            if (xyPlot.getDomainAxis() instanceof NumberAxis) {
+                final NumberAxis domainAxis = (NumberAxis) xyPlot.getDomainAxis();
                 final Double domainLowerBound = config.getDomainLowerBound();
                 final Double domainUpperBound = config.getDomainUpperBound();
                 final Double domainLowerMargin = config.getDomainLowerMargin();
@@ -413,18 +390,18 @@ public class JFreeChartFactory {
                 domainAxis.setAutoRangeIncludesZero(config.isDomainAutoRangeIncludesZero());
             }
 
-            if (XYPlot.getRangeAxis() instanceof NumberAxis) {
-                final NumberAxis rangeAxis = (NumberAxis) XYPlot.getRangeAxis();
+            if (xyPlot.getRangeAxis() instanceof NumberAxis) {
+                final NumberAxis rangeAxis = (NumberAxis) xyPlot.getRangeAxis();
                 final Double rangeLowerBound = config.getRangeLowerBound();
                 final Double rangeUpperBound = config.getRangeUpperBound();
                 final Double rangeLowerMargin = config.getRangeLowerMargin();
                 final Double rangeUpperMargin = config.getRangeUpperMargin();
 
                 if (rangeUpperBound != null) {
-                    XYPlot.getRangeAxis().setUpperBound(rangeUpperBound);
+                    xyPlot.getRangeAxis().setUpperBound(rangeUpperBound);
                 }
                 if (rangeLowerBound != null) {
-                    XYPlot.getRangeAxis().setLowerBound(rangeLowerBound);
+                    xyPlot.getRangeAxis().setLowerBound(rangeLowerBound);
                 }
 
                 if (rangeLowerMargin != null) {
@@ -467,29 +444,29 @@ public class JFreeChartFactory {
             plot.setRangeGridlinesVisible(true);
             plot.setRenderer(renderer);
         } else if (chart.getPlot() instanceof XYPlot) {
-            final XYPlot XYPlot = (XYPlot) chart.getPlot();
+            final XYPlot xyPlot = (XYPlot) chart.getPlot();
             if (config.getDotWidth() != 1 || config.getDotHeight() != 1) {
-                final XYDotRenderer XYDotRenderer = new XYDotRenderer();
+                final XYDotRenderer xyDotRenderer = new XYDotRenderer();
                 if (config.getDotWidth() != 1) {
-                    XYDotRenderer.setDotWidth(config.getDotWidth());
+                    xyDotRenderer.setDotWidth(config.getDotWidth());
                 }
                 if (config.getDotHeight() != 1) {
-                    XYDotRenderer.setDotHeight(config.getDotHeight());
+                    xyDotRenderer.setDotHeight(config.getDotHeight());
                 }
-                XYPlot.setRenderer(XYDotRenderer);
-            } else if (XYPlot.getRenderer() instanceof XYBarRenderer) {
+                xyPlot.setRenderer(xyDotRenderer);
+            } else if (xyPlot.getRenderer() instanceof XYBarRenderer) {
                 if (config.isUseYInterval()) {
-                    final XYBarRenderer XYBarRenderer = (XYBarRenderer) XYPlot.getRenderer();
-                    XYBarRenderer.setUseYInterval(true);
-                    XYPlot.setRenderer(XYBarRenderer);
+                    final XYBarRenderer xyPlotRenderer = (XYBarRenderer) xyPlot.getRenderer();
+                    xyPlotRenderer.setUseYInterval(true);
+                    xyPlot.setRenderer(xyPlotRenderer);
                 }
 
             }
 
             if (config.getLineWidth() != null) {
-                final int seriesCount = XYPlot.getDataset().getSeriesCount();
+                final int seriesCount = xyPlot.getDataset().getSeriesCount();
                 for (int i = 0; i < seriesCount; i++) {
-                    XYPlot.getRenderer().setSeriesStroke(i, new BasicStroke(config.getLineWidth(), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                    xyPlot.getRenderer().setSeriesStroke(i, new BasicStroke(config.getLineWidth(), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
                 }
             }
         }
@@ -515,7 +492,7 @@ public class JFreeChartFactory {
 
     private static void setCategoryItemLabelGenerator(final JFreeChart chart, final Configuration config) throws XPathException {
         final String className = config.getCategoryItemLabelGeneratorClass();
-        CategoryItemLabelGenerator generator;
+        final CategoryItemLabelGenerator generator;
 
         if (className != null) {
             try {
@@ -539,12 +516,13 @@ public class JFreeChartFactory {
             } else {
                 final CategoryItemRenderer renderer = ((CategoryPlot) chart.getPlot()).getRenderer();
 
-                renderer.setBaseItemLabelGenerator(generator);
+                renderer.setDefaultItemLabelGenerator(generator);
 
                 // This method should no longer be used (as of version 1.0.6).
                 // It is sufficient to rely on {@link #setSeriesItemLabelsVisible(int,
                 // Boolean)} and {@link #setBaseItemLabelsVisible(boolean)}.
-                renderer.setItemLabelsVisible(true);
+                //renderer.setItemLabelsVisible(true);
+                renderer.setDefaultItemLabelsVisible(true);
             }
         }
     }
@@ -590,7 +568,7 @@ public class JFreeChartFactory {
                     }
 
                 } catch (final XPathException e) {
-                    logger.warn("Invalid colour name or hex value specified for SeriesColors: " + colorName + ", default colour will be used instead.");
+                    LOGGER.warn("Invalid colour name or hex value specified for SeriesColors: " + colorName + ", default colour will be used instead.");
                 }
 
                 i++;
@@ -662,7 +640,7 @@ public class JFreeChartFactory {
                         final Color color = Colour.getColor(colorName);
                         plot.setSectionPaint(sectionName, color);
                     } catch (final XPathException e) {
-                        logger.warn(MessageFormat.format("Invalid colour name or hex value specified for "
+                        LOGGER.warn(MessageFormat.format("Invalid colour name or hex value specified for "
                                 + "SectionColors: {0}, default colour will be used instead. "
                                 + "Section Name: {1}", colorName, sectionName));
                     }

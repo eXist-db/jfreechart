@@ -23,7 +23,7 @@ package org.exist.xquery.modules.jfreechart.render;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.exist.xquery.modules.jfreechart.Configuration;
-import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 
 import java.io.IOException;
@@ -38,7 +38,7 @@ public class JPGrenderer implements Renderer {
 
     @Override
     public void render(final JFreeChart chart, final Configuration config, final OutputStream os) throws IOException {
-        ChartUtilities.writeChartAsJPEG(os, chart, config.getImageWidth(), config.getImageHeight());
+        ChartUtils.writeChartAsJPEG(os, chart, config.getImageWidth(), config.getImageHeight());
     }
 
     @Override
