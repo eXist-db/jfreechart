@@ -46,7 +46,7 @@ import org.jfree.data.xml.XYDatasetReader;
 import org.jfree.data.xy.IntervalXYDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYZDataset;
-import org.jfree.ui.RectangleEdge;
+import org.jfree.chart.ui.RectangleEdge;
 
 import java.awt.*;
 import java.io.IOException;
@@ -145,13 +145,13 @@ public class JFreeChartFactory {
                 setCategoryChartParameters(chart, conf);
                 break;
 
-            case "BarChart3D":
-                chart = ChartFactory.createBarChart3D(
-                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
-                        conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
-
-                setCategoryChartParameters(chart, conf);
-                break;
+//            case "BarChart3D":
+//                chart = ChartFactory.createBarChart3D(
+//                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
+//                        conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
+//
+//                setCategoryChartParameters(chart, conf);
+//                break;
 
             case "LineChart":
                 chart = ChartFactory.createLineChart(
@@ -161,13 +161,13 @@ public class JFreeChartFactory {
                 setCategoryChartParameters(chart, conf);
                 break;
 
-            case "LineChart3D":
-                chart = ChartFactory.createLineChart3D(
-                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
-                        conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
-
-                setCategoryChartParameters(chart, conf);
-                break;
+//            case "LineChart3D":
+//                chart = ChartFactory.createLineChart3D(
+//                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
+//                        conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
+//
+//                setCategoryChartParameters(chart, conf);
+//                break;
 
             case "MultiplePieChart":
                 chart = ChartFactory.createMultiplePieChart(
@@ -245,13 +245,13 @@ public class JFreeChartFactory {
                 setCategoryChartParameters(chart, conf);
                 break;
 
-            case "StackedBarChart3D":
-                chart = ChartFactory.createStackedBarChart3D(
-                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
-                        conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
-
-                setCategoryChartParameters(chart, conf);
-                break;
+//            case "StackedBarChart3D":
+//                chart = ChartFactory.createStackedBarChart3D(
+//                        conf.getTitle(), conf.getCategoryAxisLabel(), conf.getValueAxisLabel(), categoryDataset,
+//                        conf.getOrientation(), conf.isGenerateLegend(), conf.isGenerateTooltips(), conf.isGenerateUrls());
+//
+//                setCategoryChartParameters(chart, conf);
+//                break;
 
             case "WaterfallChart":
                 chart = ChartFactory.createWaterfallChart(
@@ -539,12 +539,13 @@ public class JFreeChartFactory {
             } else {
                 final CategoryItemRenderer renderer = ((CategoryPlot) chart.getPlot()).getRenderer();
 
-                renderer.setBaseItemLabelGenerator(generator);
+                renderer.setDefaultItemLabelGenerator(generator);
 
                 // This method should no longer be used (as of version 1.0.6).
                 // It is sufficient to rely on {@link #setSeriesItemLabelsVisible(int,
                 // Boolean)} and {@link #setBaseItemLabelsVisible(boolean)}.
-                renderer.setItemLabelsVisible(true);
+                //renderer.setItemLabelsVisible(true);
+                renderer.setDefaultItemLabelsVisible(true);
             }
         }
     }

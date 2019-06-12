@@ -25,7 +25,7 @@ import org.apache.logging.log4j.Logger;
 import org.exist.xquery.XPathException;
 import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.util.TableOrder;
+import org.jfree.chart.util.TableOrder;
 import org.w3c.dom.Node;
 
 import java.awt.*;
