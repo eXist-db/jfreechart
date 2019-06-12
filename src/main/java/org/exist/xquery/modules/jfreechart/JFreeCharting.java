@@ -20,7 +20,6 @@
  */
 package org.exist.xquery.modules.jfreechart;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.exist.dom.QName;
@@ -28,7 +27,6 @@ import org.exist.http.servlets.ResponseWrapper;
 import org.exist.storage.serializers.Serializer;
 import org.exist.validation.internal.node.NodeInputStream;
 import org.exist.xquery.*;
-import org.exist.xquery.functions.response.ResponseModule;
 import org.exist.xquery.functions.response.StrictResponseFunction;
 import org.exist.xquery.modules.jfreechart.render.Renderer;
 import org.exist.xquery.modules.jfreechart.render.RendererFactory;
@@ -183,7 +181,7 @@ public class JFreeCharting extends StrictResponseFunction {
 
         return Sequence.EMPTY_SEQUENCE;
     }
-    
+
 
     /**
      * Writes chart to response wrapper as PNG image.
@@ -192,25 +190,21 @@ public class JFreeCharting extends StrictResponseFunction {
      */
     private void writeToResponseWrapper(final Configuration config, final ResponseWrapper response, final JFreeChart chart, final Renderer renderer)
             throws XPathException {
-        OutputStream os = null;
-        try {
-            response.setContentType(renderer.getContentType());
 
-            final String contentEncoding = renderer.getContentEncoding();
-            if (contentEncoding != null) {
-                response.setHeader("Content-Encoding", contentEncoding);
-            }
+        response.setContentType(renderer.getContentType());
 
-            os = response.getOutputStream();
+        final String contentEncoding = renderer.getContentEncoding();
+        if (contentEncoding != null) {
+            response.setHeader("Content-Encoding", contentEncoding);
+        }
+
+        try (OutputStream os = response.getOutputStream()) {
             renderer.render(chart, config, os);
-
 
         } catch (final IOException ex) {
             LOG.error(ex);
             throw new XPathException(this, "IO issue while serializing image. " + ex.getMessage());
 
-        } finally {
-            IOUtils.closeQuietly(os);
         }
 
     }
