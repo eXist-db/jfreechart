@@ -122,6 +122,7 @@
                 <li>Switch to Java8.</li>
                 <li>Compatible with eXist-db v4.6 and newer.</li>
                 <li>Made examples to output compressed SVG.</li>
+                <li>Removed deprecated draft map constructor for compatibility with forthcoming eXist 5.0.0-RC8.</li>
             </ul>
         </change>
     </changelog>
