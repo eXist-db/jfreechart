@@ -108,7 +108,7 @@ public class JFreeCharting extends StrictResponseFunction {
                             new FunctionParameterSequenceType("data", Type.NODE, Cardinality.EXACTLY_ONE,
                                     "The CategoryDataset or PieDataset, supplied as JFreechart XML.")
                     },
-                    new SequenceType(Type.EMPTY, Cardinality.EMPTY)
+                    new SequenceType(Type.EMPTY, Cardinality.EMPTY_SEQUENCE)
             )
     };
 
