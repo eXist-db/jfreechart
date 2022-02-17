@@ -50,7 +50,7 @@
         <exist.version>5.3.0</exist.version>
         <batik.version>1.14</batik.version>
         <jfreechart.version>1.5.3</jfreechart.version>
-        <jfreesvg.version>3.4.1</jfreesvg.version>
+        <jfreesvg.version>5.0.1</jfreesvg.version>
 
         <!-- used in the EXPath Package Descriptor -->
         <package-name>http://exist-db.org/xquery/jfreechart</package-name>
@@ -75,7 +75,7 @@
 
         <dependency>
             <groupId>org.jfree</groupId>
-            <artifactId>jfreesvg</artifactId>
+            <artifactId>org.jfree.svg</artifactId>
             <version>${jfreesvg.version}</version>
         </dependency>
 
