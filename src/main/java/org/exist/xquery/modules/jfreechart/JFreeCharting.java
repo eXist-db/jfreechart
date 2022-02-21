@@ -20,6 +20,7 @@
  */
 package org.exist.xquery.modules.jfreechart;
 
+import com.evolvedbinary.j8fu.function.ConsumerE;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.exist.dom.QName;
@@ -108,7 +109,7 @@ public class JFreeCharting extends StrictResponseFunction {
                             new FunctionParameterSequenceType("data", Type.NODE, Cardinality.EXACTLY_ONE,
                                     "The CategoryDataset or PieDataset, supplied as JFreechart XML.")
                     },
-                    new SequenceType(Type.EMPTY, Cardinality.EMPTY)
+                    new SequenceType(Type.EMPTY, Cardinality.EMPTY_SEQUENCE)
             )
     };
 
@@ -132,18 +133,22 @@ public class JFreeCharting extends StrictResponseFunction {
             final Configuration config = new Configuration();
             config.parse(((NodeValue) args[1].itemAt(0)).getNode());
 
-            // Get datastream
-            @SuppressWarnings("resource")
-            final Serializer serializer = context.getBroker().getSerializer();
-
             final NodeValue node = (NodeValue) args[2].itemAt(0);
-            final InputStream is = new NodeInputStream(context.getDatabase(), serializer, node);
+
+            // Get serializer
+            final ConsumerE<ConsumerE<Serializer, IOException>, IOException> withSerializerFn = fn -> {
+                final Serializer serializer = context.getBroker().borrowSerializer();
+                try {
+                    fn.accept(serializer);
+                } finally {
+                    context.getBroker().returnSerializer(serializer);
+                }
+            };
 
             // get chart
             final JFreeChart chart;
-            try {
+            try(InputStream is = new NodeInputStream(context.getDatabase(), withSerializerFn, node);){
                 chart = JFreeChartFactory.createJFreeChart(chartType, config, is);
-
             } catch (final IllegalArgumentException ex) {
                 throw new XPathException(this, ex.getMessage());
             }

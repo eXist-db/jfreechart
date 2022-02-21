@@ -125,6 +125,12 @@
                 <li>Removed deprecated draft map constructor for compatibility with forthcoming eXist 5.0.0-RC8.</li>
             </ul>
         </change>
+        <change version="0.5.0">
+            <ul>
+                <li>Compatible with eXist-db v5.3.</li>
+                <li>Upgrade libraries</li>
+            </ul>
+        </change>
     </changelog>
 
 </package>

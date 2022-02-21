@@ -48,21 +48,25 @@ public class SVGrenderer implements Renderer {
 
         final Rectangle bounds = new Rectangle(config.getImageWidth(), config.getImageHeight());
 
+        final Graphics2D svgGenerator = getBatik();
+
+        // draw the chart in the SVG generator
+        chart.draw(svgGenerator, bounds);
+
+        final Writer out = new OutputStreamWriter(os, StandardCharsets.UTF_8);
+        ((SVGGraphics2D)svgGenerator).stream(out, true /* use css */);
+        os.flush();
+        os.close();
+    }
+
+    private Graphics2D getBatik() {
         // Get a DOMImplementation and create an XML document
         final DOMImplementation domImpl =
                 GenericDOMImplementation.getDOMImplementation();
         final Document document = domImpl.createDocument(null, "svg", null);
 
         // Create an instance of the SVG Generator
-        final SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
-
-        // draw the chart in the SVG generator
-        chart.draw(svgGenerator, bounds);
-
-        final Writer out = new OutputStreamWriter(os, StandardCharsets.UTF_8);
-        svgGenerator.stream(out, true /* use css */);
-        os.flush();
-        os.close();
+        return  new SVGGraphics2D(document);
     }
 
     @Override
